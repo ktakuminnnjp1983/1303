@@ -1,1 +1,1 @@
-alert("hoge");
+document.write("kusottare");
