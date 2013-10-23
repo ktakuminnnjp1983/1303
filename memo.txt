@@ -1,0 +1,5 @@
+git自体
+git clone git://git.kernel.org/pub/scm/git/git.git
+
+元に戻す
+git checkout .
