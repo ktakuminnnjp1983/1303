@@ -20,6 +20,7 @@ String.ifunc
 
 p self.object_id
 p Object.object_id
+fsjfjslj
 
 =begin
 RubyのtoplevelにおいてカレントクラスはObjectであり、カレントオブジェクトはObjectのインスタンスであるmain
