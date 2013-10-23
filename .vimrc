@@ -75,6 +75,7 @@ NeoBundle 'sgur/vim-gf-autoload'
 NeoBundle 'osyo-manga/unite-fold'
 NeoBundle 'tpope/vim-fugitive'
 
+
 " }}}
 
 " plugin config {{{
