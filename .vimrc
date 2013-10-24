@@ -215,7 +215,7 @@ set clipboard+=unnamed
 "開いたファイルがあるdirectoryをcurrent directoryに 
 augroup set_current_dir_by_opend_file
     autocmd!
-    autocmd BufEnter * execute 'lcd' fnameescape(expand('%:p:h'))
+    autocmd BufEnter * execute ':silent! lcd' fnameescape(expand('%:p:h'))
 augroup END
 
 " 特定のcommand実行時にquickfixを開くmodifiableに
