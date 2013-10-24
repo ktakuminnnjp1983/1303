@@ -581,5 +581,3 @@ unlet s:unite_source
 
 "}}}
 
-" test
-
