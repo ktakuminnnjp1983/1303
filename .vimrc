@@ -406,6 +406,7 @@ nnoremap <Space>R :ResourcePicker t ja_JP<CR>
 nnoremap <Space>F :Unite file<CR>
 nnoremap <Space>H :ShowHelpOnWord<CR>
 nnoremap <Space>uf :Unite fold<CR>
+nnoremap <Space>ur :Unite file_rec<CR>
 nnoremap <C-@> :<Up><CR>
 nnoremap <C-a> <HOME>
 nnoremap <C-e> <END>
@@ -569,9 +570,14 @@ endfunction
 call unite#define_source(s:unite_source)
 unlet s:unite_source
 
-"call unite#custom#source('file', 'converters', ["converter_add_updatetime"])
-"call unite#custom#source('file_mru', 'matchers', ["matcher_fuzzy"])
-
+"call unite#custom#source('file', 'converters', ['converter_add_updatetime'])
+" call unite#custom#source('file_mru', 'matchers', ['matcher_hide_hidden_files', 'matcher_default'])
+""call unite#custom#source('file_mru', 'ignore_pattern', '\.svn-base$\|\.jax$')
+""call unite#custom#source('file_rec', 'ignore_pattern', '\.d$\|\.jax$')
+"let g:unite_source_rec_ignore_pattern = '\.d$\|\.jax$'
+let g:unite_source_file_mru_ignore_pattern = '\.svn-base$\|\.jax$' "おそらくmru.vimのデフォルト値おかしい
+" call unite#custom#source('file_mru', 'ignore_pattern', unite#sources#mru#define()[0]['ignore_pattern'] . '\|\.svn-base$\|\.jax$')
+call unite#custom#source('file_rec', 'ignore_pattern', unite#sources#rec#define()[0]['ignore_pattern'] . '\|\/lcov\/\|\.\d$')
 "}}}
 
 " memo {{{
