@@ -75,6 +75,7 @@ NeoBundle 'sgur/vim-gf-autoload'
 NeoBundle 'osyo-manga/unite-fold'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'zhaocai/unite-scriptnames'
+NeoBundle 'basyura/unite-matchers'
 
 
 
@@ -571,11 +572,11 @@ call unite#define_source(s:unite_source)
 unlet s:unite_source
 
 "call unite#custom#source('file', 'converters', ['converter_add_updatetime'])
-" call unite#custom#source('file_mru', 'matchers', ['matcher_hide_hidden_files', 'matcher_default'])
+call unite#custom#source('file_mru', 'matchers', ['matcher_hide_hidden_files', 'matcher_file_name'])
 ""call unite#custom#source('file_mru', 'ignore_pattern', '\.svn-base$\|\.jax$')
 ""call unite#custom#source('file_rec', 'ignore_pattern', '\.d$\|\.jax$')
 "let g:unite_source_rec_ignore_pattern = '\.d$\|\.jax$'
-let g:unite_source_file_mru_ignore_pattern = '\.svn-base$\|\.jax$' "おそらくmru.vimのデフォルト値おかしい
+let g:unite_source_file_mru_ignore_pattern = '\.svn-base$\|\.jax$\|COMMIT_EDITMSG' "おそらくmru.vimのデフォルト値おかしい
 " call unite#custom#source('file_mru', 'ignore_pattern', unite#sources#mru#define()[0]['ignore_pattern'] . '\|\.svn-base$\|\.jax$')
 call unite#custom#source('file_rec', 'ignore_pattern', unite#sources#rec#define()[0]['ignore_pattern'] . '\|\/lcov\/\|\.\d$')
 "}}}
