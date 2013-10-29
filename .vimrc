@@ -74,6 +74,8 @@ NeoBundle 'kana/vim-gf-user'
 NeoBundle 'sgur/vim-gf-autoload'
 NeoBundle 'osyo-manga/unite-fold'
 NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'zhaocai/unite-scriptnames'
+
 
 
 " }}}
