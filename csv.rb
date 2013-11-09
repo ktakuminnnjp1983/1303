@@ -25,12 +25,12 @@ end
 
 targetFileName = ARGV[0]
 if sheet
-    require "roo"
     name, suffix = targetFileName.split(".")
     if suffix != "xls" && suffix != "xlsx" 
         puts "input .xls or .xlsx"
         exit 1
     end
+    require "roo"
     book = Roo::Spreadsheet.open(targetFileName)
     book.default_sheet = book.sheets[sheet]
     targetFileName = name + ".csv"
