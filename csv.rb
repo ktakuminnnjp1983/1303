@@ -27,7 +27,7 @@ targetFileName = ARGV[0]
 if sheet
     name, suffix = targetFileName.split(".")
     if suffix != "xls" && suffix != "xlsx" 
-        puts "input .xls or .xlsx"
+        puts "suffix:[#{suffix}]input .xls or .xlsx"
         exit 1
     end
     require "roo"
@@ -43,15 +43,7 @@ else
     end
 end
 
-reader = CSV.open(targetFileName, "r")
-
-header = reader.take(1)[0]
-rows = []
-
-reader.each do |row|
-    rows << row 
-end
-reader.close
+header, *rows = CSV.read(targetFileName) 
 
 if showMode
     puts "===== header ======"
@@ -67,7 +59,7 @@ end
 targetColumns = []
 newHeader = []
 header.each_with_index do |el, index|
-    if el
+    if el != nil && el.strip != ""
         targetColumns << index
         newHeader << el
     end
@@ -79,15 +71,21 @@ if showMode
     puts "===== targetColumns ======"
 end
 
+column1s = []
 newRows = []
 rows.each do |row|
-    next if row[0] == nil
+    column1s << row[0]
+    next if row[0] == nil || row[0].strip == ""
     newRow = []
     targetColumns.each do |index|
         newRow << row[index]
     end
     newRows << newRow
 end
+
+puts "====== column1s ======"
+p column1s.uniq
+puts "====== column1s ======"
 
 if showMode
     puts "====== newHeader ======"
