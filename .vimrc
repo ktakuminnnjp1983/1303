@@ -77,8 +77,8 @@ NeoBundle 'osyo-manga/unite-fold'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'zhaocai/unite-scriptnames'
 NeoBundle 'basyura/unite-matchers'
-
-
+NeoBundle 'vim-jp/cpp-vim'
+NeoBundle 'itchyny/lightline.vim'
 
 " }}}
 
@@ -258,42 +258,42 @@ set makeprg=env\ LANG=C\ make\ install
 
 " statusline
 set laststatus=2
-"statusline change when insert mode
-let g:hi_insert = 'highlight StatusLine guifg=darkblue guibg=darkyellow gui=none ctermfg=blue ctermbg=yellow cterm=none'
-if has('syntax')
-    augroup InsertHook
-        autocmd!
-        autocmd InsertEnter * call s:StatusLine('Enter')
-        autocmd InsertLeave * call s:StatusLine('Leave')
-    augroup END
-endif
+" "statusline change when insert mode
+" let g:hi_insert = 'highlight StatusLine guifg=darkblue guibg=darkyellow gui=none ctermfg=blue ctermbg=yellow cterm=none'
+" if has('syntax')
+    " augroup InsertHook
+        " autocmd!
+        " autocmd InsertEnter * call s:StatusLine('Enter')
+        " autocmd InsertLeave * call s:StatusLine('Leave')
+    " augroup END
+" endif
 
-let s:slhlcmd = ''
-function! s:StatusLine(mode)
-    if a:mode == 'Enter'
-        silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
-        silent exec g:hi_insert
-    else
-        highlight clear StatusLine
-        silent exec s:slhlcmd
-    endif
-endfunction
+" let s:slhlcmd = ''
+" function! s:StatusLine(mode)
+    " if a:mode == 'Enter'
+        " silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
+        " silent exec g:hi_insert
+    " else
+        " highlight clear StatusLine
+        " silent exec s:slhlcmd
+    " endif
+" endfunction
 
-function! s:GetHighlight(hi)
-    redir => hl
-    exec 'highlight '.a:hi
-    redir END
-    let hl = substitute(hl, '[\r\n]', '', 'g')
-    let hl = substitute(hl, 'xxx', '', '')
-    return hl
-endfunction
-set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [ASCII=\%03.3b]\ [HEX=\%02.2B]\ [POS=%04l,%04v][%p%%]\ [LEN=%L]
+" function! s:GetHighlight(hi)
+    " redir => hl
+    " exec 'highlight '.a:hi
+    " redir END
+    " let hl = substitute(hl, '[\r\n]', '', 'g')
+    " let hl = substitute(hl, 'xxx', '', '')
+    " return hl
+" endfunction
+" set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [ASCII=\%03.3b]\ [HEX=\%02.2B]\ [POS=%04l,%04v][%p%%]\ [LEN=%L]
 
-" cindent
-augroup mycindent
-    au!
-    au FileType c,cpp set cindent
-augroup END
+" " cindent
+" augroup mycindent
+    " au!
+    " au FileType c,cpp set cindent
+" augroup END
 
 " }}}
 
@@ -429,7 +429,6 @@ inoremap <C-a> <HOME>
 inoremap <C-e> <END>
 "insert mode 抜ける
 inoremap jj <ESC>
-inoremap kk <ESC>
 "insert mode かっこ
 "inoremap { {}<LEFT>
 "inoremap ( ()<LEFT>
@@ -573,11 +572,11 @@ call unite#define_source(s:unite_source)
 unlet s:unite_source
 
 "call unite#custom#source('file', 'converters', ['converter_add_updatetime'])
-call unite#custom#source('file_mru', 'matchers', ['matcher_hide_hidden_files', 'matcher_file_name'])
+call unite#custom#source('file_mru', 'matchers', ['matcher_file_name'])
 ""call unite#custom#source('file_mru', 'ignore_pattern', '\.svn-base$\|\.jax$')
 ""call unite#custom#source('file_rec', 'ignore_pattern', '\.d$\|\.jax$')
 "let g:unite_source_rec_ignore_pattern = '\.d$\|\.jax$'
-let g:unite_source_file_mru_ignore_pattern = '\.svn-base$\|\.jax$\|COMMIT_EDITMSG' "おそらくmru.vimのデフォルト値おかしい
+let g:unite_source_file_mru_ignore_pattern = '\.svn-base$\|\.jax$\|\.log\.\|\.log$\|COMMIT_EDITMSG' "おそらくmru.vimのデフォルト値おかしい
 " call unite#custom#source('file_mru', 'ignore_pattern', unite#sources#mru#define()[0]['ignore_pattern'] . '\|\.svn-base$\|\.jax$')
 call unite#custom#source('file_rec', 'ignore_pattern', unite#sources#rec#define()[0]['ignore_pattern'] . '\|\/lcov\/\|\.\d$')
 "}}}
@@ -592,4 +591,25 @@ call unite#custom#source('file_rec', 'ignore_pattern', unite#sources#rec#define(
 " http://rubyonrails.gachinko.org/git/vimdiff/
 
 " }}}
+
+" syntax highlight temp
+" function! HighlightFunc()
+    " syntax match myFunc /[A-Z_a-z]\w*\(\s*(\)\@=/
+    " syntax match myClass /[ <]C[A-Z_a-z]\w*/
+    " syntax match myClass2 /^C[A-Z_a-z]\w*/
+    " syntax match myEnum /[ ]E[A-Z_a-z]\w*/
+    " syntax match myfinstance /[ ]f[A-Z]\w*/
+    " syntax keyword myString string
+    " highlight myFunc ctermfg=11
+    " highlight myClass ctermfg=76
+    " highlight myClass2 ctermfg=76
+    " highlight myEnum ctermfg=68
+    " highlight myString ctermfg=141
+    " highlight myfinstance ctermfg=202
+" endfunc
+
+" augroup myHighlight
+    " autocmd!
+    " autocmd BufNew,BufRead * call HighlightFunc()
+" augroup END
 
