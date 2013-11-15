@@ -43,6 +43,7 @@ else
     end
 end
 
+puts targetFileName
 header, *rows = CSV.read(targetFileName) 
 
 if showMode
