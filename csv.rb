@@ -1,5 +1,6 @@
 #!/usr/bin/ruby
 
+require "nkf"
 require "csv"
 require "optparse"
 
@@ -23,6 +24,12 @@ if ARGV.size != 2
     exit 1
 end
 
+def convertUTF8_array(arr)
+    arr.map do |el|
+        NKF.nkf("-w -xm0", el) if el
+    end
+end
+
 targetFileName = ARGV[0]
 if sheet
     name, suffix = targetFileName.split(".")
@@ -44,7 +51,23 @@ else
 end
 
 puts targetFileName
+s = File.open(targetFileName, "r") {|f| f.read }
+sutf = NKF.nkf("-w -xm0", s)
+p s
+p sutf
+File.open(targetFileName, "w") {|f| f.write(sutf)}
+s = File.open(targetFileName, "r") {|f| f.read }
+p s
+
+
 header, *rows = CSV.read(targetFileName) 
+
+header = convertUTF8_array(header)
+nrows = []
+rows.each do |row|
+    nrows << convertUTF8_array(row)
+end
+rows = nrows
 
 if showMode
     puts "===== header ======"
