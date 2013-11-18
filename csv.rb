@@ -24,15 +24,22 @@ if ARGV.size != 2
     exit 1
 end
 
-def convertUTF8_array(arr)
-    arr.map do |el|
-        NKF.nkf("-w -xm0", el) if el
-    end
+targetFileName = ARGV[0]
+arr = targetFileName.split(".")
+if arr.size < 2
+    puts "invalid file"
+    exit
 end
 
-targetFileName = ARGV[0]
+suffix = arr.pop
+name = arr.join(".")
+if suffix != "xls" && suffix != "xlsx" && suffix != "csv" 
+    puts "suffix:[#{suffix}] input .xls or .xlsx or .csv"
+    exit 1
+end
+p name
+
 if sheet
-    name, suffix = targetFileName.split(".")
     if suffix != "xls" && suffix != "xlsx" 
         puts "suffix:[#{suffix}]input .xls or .xlsx"
         exit 1
@@ -53,21 +60,11 @@ end
 puts targetFileName
 s = File.open(targetFileName, "r") {|f| f.read }
 sutf = NKF.nkf("-w -xm0", s)
-p s
-p sutf
+targetFileName = name + "_utf8.csv"
+p targetFileName
 File.open(targetFileName, "w") {|f| f.write(sutf)}
-s = File.open(targetFileName, "r") {|f| f.read }
-p s
-
 
 header, *rows = CSV.read(targetFileName) 
-
-header = convertUTF8_array(header)
-nrows = []
-rows.each do |row|
-    nrows << convertUTF8_array(row)
-end
-rows = nrows
 
 if showMode
     puts "===== header ======"
@@ -96,6 +93,7 @@ if showMode
 end
 
 column1s = []
+column1s << header[0]
 newRows = []
 rows.each do |row|
     column1s << row[0]
