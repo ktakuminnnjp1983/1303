@@ -24,8 +24,8 @@ function! HighlightFunc()
     highlight myEnum ctermfg=68
     highlight myfginstance ctermfg=151
     highlight myfinstance ctermfg=137
-    highlight myConst ctermfg=166
-    highlight myConst2 ctermfg=166
+    highlight myConst ctermfg=182
+    highlight myConst2 ctermfg=182
    
     highlight myvector ctermfg=173
     highlight myString ctermfg=173
