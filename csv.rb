@@ -60,7 +60,7 @@ s = File.open(targetFileName, "r") {|f| f.read }
 sutf = NKF.nkf("-w -xm0", s)
 targetFileName = name + "_utf8.csv"
 File.open(targetFileName, "w") {|f| f.write(sutf)}
-puts "generated {#targetFileName}"
+puts "generated #{targetFileName}"
 
 header, *rows = CSV.read(targetFileName) 
 
