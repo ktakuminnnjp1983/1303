@@ -37,7 +37,6 @@ if suffix != "xls" && suffix != "xlsx" && suffix != "csv"
     puts "suffix:[#{suffix}] input .xls or .xlsx or .csv"
     exit 1
 end
-p name
 
 if sheet
     if suffix != "xls" && suffix != "xlsx" 
@@ -57,12 +56,11 @@ else
     end
 end
 
-puts targetFileName
 s = File.open(targetFileName, "r") {|f| f.read }
 sutf = NKF.nkf("-w -xm0", s)
 targetFileName = name + "_utf8.csv"
-p targetFileName
 File.open(targetFileName, "w") {|f| f.write(sutf)}
+puts "generated {#targetFileName}"
 
 header, *rows = CSV.read(targetFileName) 
 
