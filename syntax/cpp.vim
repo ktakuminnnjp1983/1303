@@ -2,6 +2,7 @@ function! HighlightFunc()
     syntax match myFunc /[A-Za-z_]\w*\((\)\@=/
     syntax match myFunc2 /\W\w*\(<.*>(\)\@=/
     syntax match myComp /\W[A-Z][a-z_A-Z]*\(\W\)\@=/
+    syntax match myComp2 /^[A-Z][a-z_A-Z]*\(\W\)\@=/
     syntax match myClass /\WC[A-Za-z]\w*\(\W\)\@=/
     syntax match myClass2 /^C[A-Za-z]\w*\(\W\)\@=/
     syntax match myEnum /\WE[A-Z]\w*\(\W\)\@=/
@@ -16,14 +17,15 @@ function! HighlightFunc()
     
     " syntax match kkk /)/
     
-    highlight myFunc ctermfg=133
-    highlight myFunc2 ctermfg=133
-    highlight myComp ctermfg=71
-    highlight myClass ctermfg=71
-    highlight myClass2 ctermfg=71
+    highlight myFunc ctermfg=221
+    highlight myFunc2 ctermfg=221
+    highlight myComp ctermfg=173
+    highlight myComp2 ctermfg=173
+    highlight myClass ctermfg=173
+    highlight myClass2 ctermfg=173
     highlight myEnum ctermfg=68
     highlight myfginstance ctermfg=151
-    highlight myfinstance ctermfg=137
+    highlight myfinstance ctermfg=136
     highlight myConst ctermfg=182
     highlight myConst2 ctermfg=182
    
