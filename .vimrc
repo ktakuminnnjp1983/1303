@@ -79,7 +79,7 @@ NeoBundle 'zhaocai/unite-scriptnames'
 NeoBundle 'basyura/unite-matchers'
 NeoBundle 'vim-jp/cpp-vim'
 NeoBundle 'itchyny/lightline.vim'
-
+NeoBundle 'vim-scripts/vim-auto-save'
 " }}}
 
 " plugin config {{{
@@ -149,6 +149,9 @@ let g:vimshell_user_prompt = 'getcwd()'
 "
 " see :h vundle for more details or wiki for FAQ
 " NOTE: comments after Bundle command are not allowed..
+"
+" auto saveを有効に
+let g:auto_save = 1
 
 " }}}
 
@@ -591,25 +594,3 @@ call unite#custom#source('file_rec', 'ignore_pattern', unite#sources#rec#define(
 " http://rubyonrails.gachinko.org/git/vimdiff/
 
 " }}}
-
-" syntax highlight temp
-" function! HighlightFunc()
-    " syntax match myFunc /[A-Z_a-z]\w*\(\s*(\)\@=/
-    " syntax match myClass /[ <]C[A-Z_a-z]\w*/
-    " syntax match myClass2 /^C[A-Z_a-z]\w*/
-    " syntax match myEnum /[ ]E[A-Z_a-z]\w*/
-    " syntax match myfinstance /[ ]f[A-Z]\w*/
-    " syntax keyword myString string
-    " highlight myFunc ctermfg=11
-    " highlight myClass ctermfg=76
-    " highlight myClass2 ctermfg=76
-    " highlight myEnum ctermfg=68
-    " highlight myString ctermfg=141
-    " highlight myfinstance ctermfg=202
-" endfunc
-
-" augroup myHighlight
-    " autocmd!
-    " autocmd BufNew,BufRead * call HighlightFunc()
-" augroup END
-
