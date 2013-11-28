@@ -80,6 +80,7 @@ NeoBundle 'basyura/unite-matchers'
 NeoBundle 'vim-jp/cpp-vim'
 NeoBundle 'itchyny/lightline.vim'
 NeoBundle 'vim-scripts/vim-auto-save'
+NeoBundle 'vim-scripts/vcscommand.vim'
 " }}}
 
 " plugin config {{{
@@ -395,13 +396,14 @@ nnoremap <Space>h :e %:r.h<CR>
 nnoremap <Space>c :e %:r.cpp<CR>
 nnoremap <Space>b :Unite buffer<CR>
 nnoremap <Space>r :Unite register<CR>
-nnoremap <Space>l :Unite file_mru<CR>
+nnoremap <Space>l :Unite file_mru -truncate<CR>
 nnoremap <Space>d :Unite directory_mru -default-action=vimfiler<CR>
 "nnoremap <Space>D :UniteWithBufferDir -buffer-name=files file<CR>
 nnoremap <Space>s :Unite bookmark -default-action=vimfiler<CR>
 nnoremap <Space>y :Unite history/yank<CR>
 nnoremap <Space>m :Unite mark<CR>
 nnoremap <Space>S :Unite svn/status<CR>
+nnoremap <Space>L :VCSLog<CR>
 nnoremap <Space>D :!svn diff<CR>
 nnoremap <Space>u :GundoToggle<CR>
 nnoremap <Space>f :VimFilerCurrentDir <CR>
