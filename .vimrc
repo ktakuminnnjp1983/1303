@@ -414,6 +414,8 @@ nnoremap <Space>F :Unite file<CR>
 nnoremap <Space>H :ShowHelpOnWord<CR>
 nnoremap <Space>uf :Unite fold<CR>
 nnoremap <Space>ur :Unite file_rec<CR>
+" カーソル位置の単語をgrep検索
+nnoremap <Space>g :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R><C-W><CR>
 nnoremap <C-@> :<Up><CR>
 nnoremap <C-a> <HOME>
 nnoremap <C-e> <END>
@@ -445,6 +447,8 @@ cnoremap <C-e> <END>
 
 "visual mode
 vnoremap <Space>H :ShowHelpOnWordV<CR>
+"vnoremap <Space>H :<C-u>h <C-R>*<CR>
+vnoremap <Space>g :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R>*<CR>
 
 "for snippets
 " Plugin key-mappings.
@@ -596,3 +600,4 @@ call unite#custom#source('file_rec', 'ignore_pattern', unite#sources#rec#define(
 " http://rubyonrails.gachinko.org/git/vimdiff/
 
 " }}}
+
