@@ -96,10 +96,11 @@ let g:neocomplcache_min_syntax_length = 4
 "unitesetup
  "最近開いたファイル履歴の保存数
 let g:unite_source_file_mru_limit = 1000
+let g:unite_source_grep_max_candidates = 1000
 "file_mruの表示フォーマットを指定。空にすると表示スピードが高速化される
 let g:unite_source_file_mru_filename_format = ''
 "インサートモードで開始
-let g:unite_enable_start_insert = 1
+let g:unite_enable_start_insert = 0
 let g:unite_source_history_yank_enable = 1
 call unite#custom#source('file_mru', 'converters', ["converter_file_directory"])
 " unite vimgrep ag
@@ -415,7 +416,7 @@ nnoremap <Space>H :ShowHelpOnWord<CR>
 nnoremap <Space>uf :Unite fold<CR>
 nnoremap <Space>ur :Unite file_rec<CR>
 " カーソル位置の単語をgrep検索
-nnoremap <Space>g :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R><C-W><CR>
+nnoremap <Space>gr :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R><C-W><CR>
 nnoremap <C-@> :<Up><CR>
 nnoremap <C-a> <HOME>
 nnoremap <C-e> <END>
@@ -448,7 +449,7 @@ cnoremap <C-e> <END>
 "visual mode
 vnoremap <Space>H :ShowHelpOnWordV<CR>
 "vnoremap <Space>H :<C-u>h <C-R>*<CR>
-vnoremap <Space>g :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R>*<CR>
+vnoremap <Space>gr :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R>*<CR>
 
 "for snippets
 " Plugin key-mappings.
