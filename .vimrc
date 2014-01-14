@@ -48,7 +48,7 @@ Bundle 'surround.vim'
 Bundle 'SrcExpl'
 Bundle 'Trinity'
 Bundle 'TagHighlight'
-Bundle 'srking/ag.vim'
+Bundle 'rking/ag.vim'
 Bundle 'Shougo/neobundle.vim'
 "https://github.com/scrooloose/nerdtree
 "grep 可能にしてみたhttps://gist.github.com/masaakif/414375
