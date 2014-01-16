@@ -1,0 +1,86 @@
+<head>
+  <title></title>
+  <script type="text/javascript" src="./flipsnap.min.js"></script>
+</head>
+
+<body>
+  {{> show_info}}
+  {{> checkArea}}
+  <hr/>
+  <div class="viewport">
+      <div class="flipsnap">
+          <div class="item">0</div>
+          <div class="item">1</div>
+          <div class="item">2</div>
+          <div class="item">3</div>
+          <div class="item">4</div>
+          <div class="item">5</div>
+          <div class="item">6</div>
+          <div class="item">7</div>
+          <div class="item">8</div>
+          <div class="item">9</div>
+      </div>
+  </div>
+  {{> slide}}
+  <hr/>
+  {{> opinionsResult}}
+  <hr/>
+  {{> resetArea}}
+ 
+<style>
+.viewport {
+    width: 320px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+.flipsnap {
+    width: 3200px; /* 320px(item width) * 3(item count) */
+}
+.item {
+    float: left;
+    width: 310px;
+    font-size: 50px;
+    text-align: center;
+    padding: 50px 0;
+    background: #EFEFEF;
+    border: 5px solid #999;
+    color: #666;
+    cursor: pointer;
+}
+</style>
+ 
+</body>
+
+<template name="show_info">
+    <div>閲覧人数 {{info.count}}</div>
+    <div>マスタースライド No. {{info.masterSlideNo}}</div>
+</template>
+
+<template name="checkArea">
+    {{#if check.val}}
+        <div id="sync">同期する<input id="syncCheck" type="checkbox"></input></div>
+    {{/if}}
+</template>
+
+<template name="slide">
+    スライド No. 
+    <input id="notextbox" type="text" value="0"></input>
+    <input id="prevButton" type="button" value="前へ"></input>
+    <input id="nextButton" type="button" value="次へ"></input>
+</template>
+
+<template name="opinionsResult">
+     評価<br/>
+     {{#each opinions}}
+         <input type="button" value="{{name}}" id="{{name}}Button"></input>
+         {{count}}
+         <br/>
+     {{/each}}
+</template>
+
+<template name="resetArea">
+    {{#if isAdmin.val}}
+        <input type="button" id="resetButton" value="リセット"></input>
+    {{/if}}
+</template>
+

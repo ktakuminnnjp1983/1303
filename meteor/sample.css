@@ -1,0 +1,11 @@
+#employeeList, #employeeList td, #employeeList th {
+    border: 1px solid gray;
+}
+
+#employeeList {
+    border-collapse: collapse;
+}
+
+#employeeList th {
+    background-color: lightgray;
+}

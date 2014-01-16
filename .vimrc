@@ -48,7 +48,7 @@ Bundle 'surround.vim'
 Bundle 'SrcExpl'
 Bundle 'Trinity'
 Bundle 'TagHighlight'
-Bundle 'rking/ag.vim'
+Bundle 'srking/ag.vim'
 Bundle 'Shougo/neobundle.vim'
 "https://github.com/scrooloose/nerdtree
 "grep 可能にしてみたhttps://gist.github.com/masaakif/414375
@@ -96,6 +96,7 @@ let g:neocomplcache_min_syntax_length = 4
 "unitesetup
  "最近開いたファイル履歴の保存数
 let g:unite_source_file_mru_limit = 1000
+let g:unite_source_directory_mru_limit = 1000
 let g:unite_source_grep_max_candidates = 1000
 "file_mruの表示フォーマットを指定。空にすると表示スピードが高速化される
 let g:unite_source_file_mru_filename_format = ''
@@ -387,8 +388,8 @@ nnoremap Y y$
 nnoremap <C-p> "0p
 nnoremap M :set modifiable!<CR>
 nnoremap <C-]> g<C-]>
-nnoremap gr :Unite grep:.<CR>
-nnoremap fi :Unite find:.<CR>
+" nnoremap gr :Unite grep:.<CR>
+nnoremap fi :normal gc<CR>:Unite find:.<CR>
 nnoremap ba :UniteBookmarkAdd<CR>
 nnoremap vs :VimShell -split<CR>
 nnoremap <Space>t :Tlist<CR>
@@ -448,6 +449,7 @@ cnoremap <C-e> <END>
 
 "visual mode
 vnoremap <Space>H :ShowHelpOnWordV<CR>
+
 "vnoremap <Space>H :<C-u>h <C-R>*<CR>
 vnoremap <Space>gr :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R>*<CR>
 
