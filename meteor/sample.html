@@ -7,48 +7,13 @@
   {{> show_info}}
   {{> checkArea}}
   <hr/>
-  <div class="viewport">
-      <div class="flipsnap">
-          <div class="item">0</div>
-          <div class="item">1</div>
-          <div class="item">2</div>
-          <div class="item">3</div>
-          <div class="item">4</div>
-          <div class="item">5</div>
-          <div class="item">6</div>
-          <div class="item">7</div>
-          <div class="item">8</div>
-          <div class="item">9</div>
-      </div>
-  </div>
+  {{> displaySlide}}
   {{> slide}}
   <hr/>
   {{> opinionsResult}}
   <hr/>
   {{> resetArea}}
- 
-<style>
-.viewport {
-    width: 320px;
-    overflow: hidden;
-    margin: 0 auto;
-}
-.flipsnap {
-    width: 3200px; /* 320px(item width) * 3(item count) */
-}
-.item {
-    float: left;
-    width: 310px;
-    font-size: 50px;
-    text-align: center;
-    padding: 50px 0;
-    background: #EFEFEF;
-    border: 5px solid #999;
-    color: #666;
-    cursor: pointer;
-}
-</style>
- 
+  {{> test}}
 </body>
 
 <template name="show_info">
@@ -57,7 +22,7 @@
 </template>
 
 <template name="checkArea">
-    {{#if check.val}}
+    {{#if check}}
         <div id="sync">同期する<input id="syncCheck" type="checkbox"></input></div>
     {{/if}}
 </template>
@@ -79,8 +44,28 @@
 </template>
 
 <template name="resetArea">
-    {{#if isAdmin.val}}
-        <input type="button" id="resetButton" value="リセット"></input>
+    {{#if isAdmin}}
+    <input type="button" id="resetButton" value="リセット"></input><br>
     {{/if}}
+</template>
+
+<template name="displaySlide">
+<div id="viewport">
+    <div id="flipsnap">
+        {{#each slides}}
+            <div class="item">{{no}}</div>
+        {{/each}}
+    </div>
+    <div id="point"></div>
+</div>
+</template>
+
+<template name="test">
+{{#if test.test}}
+    {{test.gori}}<br/>
+    {{#each test.hage}}
+        {{a}}<br/>
+    {{/each}}
+{{/if}}
 </template>
 

@@ -3,9 +3,24 @@ console.log("Read client");
 function isMaster(){
     return location.hash === "#master";
 }
+
+function updatePoint(x, y){
+    var id;
+    var doc = MasterSlideNo.findOne({name:"slideno"})
+    if(doc){
+        id = doc._id;
+    }
+
+    MasterSlideNo.update({_id:id}, {$set:{point:{x:x,y:y}}})
+}
     
 Meteor.startup(function() {
     console.log("Client startup");
+    
+    Meteor.subscribe("watchers");
+    Meteor.subscribe("masterSlideNo");
+    Meteor.subscribe("opinions");
+
     Meteor.call("hello", "test");
     var user_id = Watchers.insert(
         {
@@ -17,12 +32,26 @@ Meteor.startup(function() {
     // sync master slide no
     MasterSlideNo.find().observeChanges({
         changed: function(id, fields) {
-            console.log("MasterSlideNo changed : %d", fields.no);
-            if(isMaster() || $("#syncCheck").prop("checked")){
-                $("#notextbox").val(fields.no);
-                g_flipsnap.moveToPoint(fields.no);
+            if(fields.point !== undefined){
+                if($("#syncCheck").prop("checked")){
+                    $("#point").css({
+                        top: fields.point.y,
+                        left: fields.point.x
+                    });
+                } 
+            }
+            if(fields.no !== undefined){
+                console.log("MasterSlideNo changed : %d", fields.no);
+                if(isMaster() || $("#syncCheck").prop("checked")){
+                    $("#notextbox").val(fields.no);
+                    g_flipsnap.moveToPoint(fields.no);
+                }
             }
         }
+    });
+    // 上と同じようなこと
+    Meteor.autorun(function(){
+        //console.log("autorun exec"+getMasterSlideNo());
     });
 
     Meteor.setInterval(function(){
@@ -33,36 +62,61 @@ Meteor.startup(function() {
     }, 1000);
 });
 
-// 表示
-Template.show_info.info = function(){
-    var slideno = getMasterSlideNo();
-    return {
-        count: Watchers.find({}).count(),
-        masterSlideNo: slideno,
-    };
-}
-Template.checkArea.check = function(){
-    return {
-        val: location.hash != "#master"
-    };
-}
-Template.opinionsResult.opinions = function(){
-    var cursor = Opinions.find();
-    return cursor;
-}
-Template.resetArea.isAdmin = function(){
-    return {
-        val: location.hash == "#master"
-    };
-}
+// 表示 tempalte helpers
+Template.test.helpers({
+    test: function(){
+        return {
+            test: location.hash == "#test",
+            gori: "val",
+            hage: [{a:"a1"}, {a:"a2"}] 
+        };
+    }
+});
+Template.show_info.helpers({
+    info : function(){
+        var slideno = getMasterSlideNo();
+        return {
+            count: Watchers.find({}).count(),
+            masterSlideNo: slideno,
+        };
+    }
+});
+Template.checkArea.helpers({
+    check: function(){
+        return location.hash != "#master";
+    }
+});
+Template.opinionsResult.helpers({
+    opinions: function(){
+        return Opinions.find();
+    }
+});
+Template.resetArea.helpers({
+    isAdmin: function(){
+        return location.hash == "#master";
+    }
+});
+Template.displaySlide.helpers({
+    slides: function(){
+        return [{no:0},{no:1},{no:2},{no:3},{no:4},{no:5},{no:6},{no:7},{no:8},{no:9}];
+    }
+});
 
 // イベント
 Template.checkArea.events = {
     "change #syncCheck": function(e, template){
-        if($("#syncCheck").prop("checked")){
+        if(isMaster()){
+            return ;
+        }
+
+        var checked = $("#syncCheck").prop("checked");
+        if(checked){
             var no = getMasterSlideNo();
             $("#notextbox").val(no);
             g_flipsnap.moveToPoint(no);
+            $("#point").css("display", "block");
+        } else{
+            $("#point").css("display", "none");
         }
     }
 };
@@ -94,6 +148,18 @@ Template.slide.events = {
             return ;
         }
         g_flipsnap.moveToPoint(changed);
+    }
+    
+};
+Template.displaySlide.events = {
+    "mousemove .item": function(e, template){
+        if(isMaster()){
+            $("#point").css({
+                top: e.offsetY,
+                left: e.offsetX
+            });
+            updatePoint(e.offsetX, e.offsetY);
+        }
     }
 };
 Template.opinionsResult.events = {
@@ -131,6 +197,7 @@ Template.resetArea.events = {
     }
 };
 
+
 $(function(){
     console.log("DOM Ready");
     if(location.hash == "#master"){
@@ -139,7 +206,7 @@ $(function(){
         document.title = "一般"
     }
     
-    g_flipsnap = Flipsnap(".flipsnap");
+    g_flipsnap = Flipsnap("#flipsnap");
     g_flipsnap.element.addEventListener("fspointmove", function(a,i){
         $("#notextbox").val(g_flipsnap.currentPoint);
         if(isMaster()){

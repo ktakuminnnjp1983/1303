@@ -31,3 +31,10 @@ showObj = function(obj){
     }
 }
 
+if(Meteor.isServer){
+    console.log("common isServer");
+}
+
+if(Meteor.isClient){
+    console.log("common isClient");
+}
