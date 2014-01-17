@@ -12,6 +12,9 @@ Meteor.startup(function () {
     Meteor.publish("opinions", function(){
         return Opinions.find();
     });
+    Meteor.publish("comments", function(){
+        return Comments.find();
+    });
 
     Watchers.allow({
         // データの挿入を許可するか
@@ -57,10 +60,24 @@ Meteor.startup(function () {
         },
         fetch: undefined
     });
+    Comments.allow({
+        insert: function(userId, doc) {
+            return true;
+        },
+        update: function(userId, docs, fields, modifier) {
+            return true;
+
+        },
+        remove: function(userId, docs) {
+            return true;
+        },
+        fetch: undefined
+    });
     
     Watchers.remove({});
     MasterSlideNo.remove({});
     Opinions.remove({});
+    Comments.remove({});
     
     MasterSlideNo.insert({
         no: 0, 

@@ -12,6 +12,8 @@
   <hr/>
   {{> opinionsResult}}
   <hr/>
+  {{> commentsArea}}
+  <hr/>
   {{> resetArea}}
   {{> test}}
 </body>
@@ -67,5 +69,13 @@
         {{a}}<br/>
     {{/each}}
 {{/if}}
+</template>
+
+<template name="commentsArea">
+    <textarea id="commentsArea" cols="40" rows="3" wrap="soft"></textarea>
+    <input id="commentSubmit" type="button" value="投稿"></input><br/>
+    {{#each comments}}
+        {{no}}: {{{comment}}}<br/>
+    {{/each}}
 </template>
 

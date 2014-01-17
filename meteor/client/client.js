@@ -20,6 +20,7 @@ Meteor.startup(function() {
     Meteor.subscribe("watchers");
     Meteor.subscribe("masterSlideNo");
     Meteor.subscribe("opinions");
+    Meteor.subscribe("comments");
 
     Meteor.call("hello", "test");
     var user_id = Watchers.insert(
@@ -101,6 +102,11 @@ Template.displaySlide.helpers({
         return [{no:0},{no:1},{no:2},{no:3},{no:4},{no:5},{no:6},{no:7},{no:8},{no:9}];
     }
 });
+Template.commentsArea.helpers({
+    comments: function(){
+        return Comments.find({}, {sort: {no: -1}});
+    }
+});
 
 // イベント
 Template.checkArea.events = {
@@ -180,6 +186,18 @@ Template.opinionsResult.events = {
         );
     }
 };
+Template.commentsArea.events = {
+    "click #commentSubmit": function(e, template){
+        var numOfComments = Comments.find().count();
+        var comment = template.find("#commentsArea").value;
+        comment = comment.replace(/\r?\n/g, "<br/>");
+        Comments.insert({
+            no: numOfComments+1,
+            comment: comment
+        })
+        template.find("#commentsArea").value = "";
+    }
+};
 Template.resetArea.events = {
     "click #resetButton": function(){
         var slidenoid = MasterSlideNo.findOne({name:"slideno"})._id;
@@ -192,6 +210,12 @@ Template.resetArea.events = {
             Opinions.update(
                 {_id: doc._id},
                 {$set: {count: 0}}
+            );
+        });
+        
+        Comments.find({}).forEach(function(doc){
+            Comments.remove(
+                {_id: doc._id}
             );
         });
     }

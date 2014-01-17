@@ -5,6 +5,7 @@ console.log("Read common");
 Watchers = new Meteor.Collection("watchers");
 Opinions = new Meteor.Collection("opinions");
 MasterSlideNo = new Meteor.Collection("masterSlideNo");
+Comments = new Meteor.Collection("comments");
 
 // 共通methods
 getMasterSlideNo = function(){
