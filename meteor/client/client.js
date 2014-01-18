@@ -237,5 +237,21 @@ $(function(){
             setMasterSlideNo(g_flipsnap.currentPoint);
         }
     }, false);
+
+    $("#mainFrame").resizable({handles: "e"});
+    
+    // var successCallback = function(stream) {
+        // var video = jQuery("#chat");
+        // var videoStream = window.webkitURL ? window.webkitURL.createObjectURL(stream) : stream;
+        // video.attr("src", videoStream);
+    // };
+    // var failCallback = function(error) {
+        // alert("error... code : " + error.code);
+    // };
+    // navigator.webkitGetUserMedia(
+        // {video: true, audio: true},
+        // successCallback, 
+        // failCallback
+    // );
 });
 

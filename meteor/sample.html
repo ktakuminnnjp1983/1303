@@ -4,18 +4,26 @@
 </head>
 
 <body>
-  {{> show_info}}
-  {{> checkArea}}
-  <hr/>
-  {{> displaySlide}}
-  {{> slide}}
-  <hr/>
-  {{> opinionsResult}}
-  <hr/>
-  {{> commentsArea}}
-  <hr/>
-  {{> resetArea}}
-  {{> test}}
+    <div id="baseFrame">
+        <div id="mainFrame">
+            <h3>会議支援システム Ver.0.0.1</h3>
+            {{> show_info}}
+            {{> checkArea}}
+            <hr/>
+            {{> displaySlide}}
+            {{> slide}}
+            <hr/>
+            {{> opinionsResult}}
+            <hr/>
+            {{> resetArea}}
+            {{> test}}
+        </div>
+        <div id="commentsFrame">
+            {{> commentsArea}}
+        </div>
+        <div style="float: clear;"></div>
+        <!-- <video id="chat" height="400" width="800" controls autoplay style="width:100%; height:100%;"></video> -->
+    </div>
 </body>
 
 <template name="show_info">
@@ -72,7 +80,8 @@
 </template>
 
 <template name="commentsArea">
-    <textarea id="commentsArea" cols="40" rows="3" wrap="soft"></textarea>
+    コメント<br/>
+    <textarea id="commentsArea" cols="40" wrap="soft"></textarea>
     <input id="commentSubmit" type="button" value="投稿"></input><br/>
     {{#each comments}}
         {{no}}: {{{comment}}}<br/>
