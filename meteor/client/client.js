@@ -188,8 +188,12 @@ Template.opinionsResult.events = {
 };
 Template.commentsArea.events = {
     "click #commentSubmit": function(e, template){
-        var numOfComments = Comments.find().count();
         var comment = template.find("#commentsArea").value;
+        if(comment == ""){
+            return ;
+        }
+        
+        var numOfComments = Comments.find().count();
         comment = comment.replace(/\r?\n/g, "<br/>");
         Comments.insert({
             no: numOfComments+1,
