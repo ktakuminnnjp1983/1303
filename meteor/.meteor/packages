@@ -7,3 +7,5 @@ standard-app-packages
 insecure
 preserve-inputs
 jquery
+accounts-twitter
+accounts-ui

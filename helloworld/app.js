@@ -32,6 +32,7 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/users', user.list);
 
+
 var httpServer = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
@@ -54,12 +55,18 @@ wsServer.on("request", function(request){
     console.log(connections.length);
 
     connection.on("message", function(message){
+        console.log(message.constructor);
+        console.log(message.type);
+        console.log("########################");
         if(message.type == "utf8"){
-            console.log(message);
-        } else if(message.type == "binary"){
-            console.log(message.binaryData);
+            console.log(message.utf8Data);
             for(var i=0; i<connections.length; ++i){
-                connections[i].send(message.binaryData);
+                connections[i].send(message.utf8Data);
+            }
+        } else if(message.type == "binary"){
+            console.log(message.binaryData.constructor);
+            for(var i=0; i<connections.length; ++i){
+                connections[i].send(message.binaryData); // Buffer node.js
             }
         }
     });
