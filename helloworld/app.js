@@ -53,13 +53,13 @@ wsServer.on("request", function(request){
     var connection = request.accept(null, request.origin);
     connections.push(connection);
     console.log(connections.length);
-
+ 
     connection.on("message", function(message){
         console.log(message.constructor);
         console.log(message.type);
         console.log("########################");
         if(message.type == "utf8"){
-            console.log(message.utf8Data);
+            console.log(message.utf8Data.length);
             for(var i=0; i<connections.length; ++i){
                 connections[i].send(message.utf8Data);
             }

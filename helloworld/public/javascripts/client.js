@@ -1,24 +1,51 @@
-var socket = new WebSocket("ws://172.27.66.36:3000");
-socket.binaryType = "blob";
+var socket = new WebSocket("ws://192.168.11.10:3000");
 
 socket.onopen = function(){
     console.log("Client onopen");
 };
 
 socket.onmessage = function(message){
-    console.log(message.constructor);
-    console.log(message);
-    console.log(message.data);
-    var reader = new FileReader();
-    reader.onload = function(e){
-        console.log("readblobdata");
-        $("#imgArea").attr("src", reader.result);
+    console.log("get some message");
+    console.log(message.data.constructor);
+    if(message.data.constructor == String){
+        console.log("sended binaryString");
+        var buffer = new Uint8Array(message.data.length);
+        for(var i=0; i<message.data.length; ++i){
+            buffer[i] = message.data.charCodeAt(i);
+        }
+        var b = new Blob([buffer.buffer], {type:"image\/jpeg"});
+        var reader = new FileReader();
+        reader.onload = function(e){
+            console.log(reader.result);
+            $("#imgArea").attr("src", reader.result);
+        }
+        reader.readAsDataURL(b);
+    } else if(message.data.constructor == Blob){
+        var reader = new FileReader();
+        reader.onload = function(e){
+            console.log("readblobdata");
+            $("#imgArea").attr("src", reader.result);
+        }
+        reader.readAsDataURL(message.data);
+    } else if(message.data.constructor == ArrayBuffer){
+        var buffer = new Uint8Array(message.data);
+        var b = new Blob([buffer], {type:"image\/jpeg"});
+        var reader = new FileReader();
+        console.log(message.data);
+        reader.onload = function(e){
+            console.log("readArrayBufferData %d", buffer.length);
+            $("#imgArea").attr("src", reader.result);
+        }
+        reader.readAsDataURL(b);
+    } else{
+        alert("error");        
     }
-    reader.readAsDataURL(message.data);
-    
-    // var url = URL.createObjectURL(message.data);
-    // console.log(url);
-    // $("#imgArea").attr("src", url);
+    // console.log(message.data);
+    // console.log(message.data.constructor);
+    // console.log(typeof message.data);
+    // console.log(message.type);
+    // console.log(message.data.charCodeAt(0).toString(16));
+
 }
 
 // var mediaStream;
@@ -42,10 +69,32 @@ $(function(){
         socket.send("textMessage");
     });
 
-    $("#fileButton").change(function(event){
-        var f = $("#fileButton").get(0).files[0];
+    $("#fileUpString").change(function(event){
+        var f = $("#fileUpString").get(0).files[0];
+        var reader = new FileReader();
+        reader.onload = function(e){
+            console.log("read binarySting %d", reader.result.length);
+            socket.send(reader.result);
+        };
+        reader.readAsBinaryString(f);
+    });
+    $("#fileUpBlob").change(function(event){
+        socket.binaryType = "blob";
+        var f = $("#fileUpBlob").get(0).files[0];
+        console.log("upload blob(file) %d", f.size);
         socket.send(f);
-        // FileReaderを使ってarrayBufferを送ってもよい
+    });
+    $("#fileUpArrayBuffer").change(function(event){
+        socket.binaryType = "arraybuffer";
+        var f = $("#fileUpArrayBuffer").get(0).files[0];
+        var reader = new FileReader();
+        reader.onload = function(e){
+            console.log(reader.result);
+            var buf = new Uint8Array(reader.result);
+            console.log("read arrayBuffer %d", buf.length);
+            socket.send(buf);
+        };
+        reader.readAsArrayBuffer(f);
     });
 
     // setTimeout(function(){
