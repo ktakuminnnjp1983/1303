@@ -2,6 +2,9 @@ console.log("Read server");
 
 // websocket settings
 // http://d.hatena.ne.jp/nextliteracy/20131203/1386033577
+// npm install -g meteorite
+// mrt add npm
+// mrt
 var WebSocketServer = Meteor.require('websocket').server;
 var http = Meteor.require('http');
 
