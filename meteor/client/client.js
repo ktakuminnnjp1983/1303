@@ -163,11 +163,14 @@ Template.slide.events = {
 Template.displaySlide.events = {
     "mousemove .item": function(e, template){
         if(isMaster()){
+            var off = $(e.target).offset();
+            var offsetX = e.clientX - off.left; 
+            var offsetY = e.clientY - off.top;
             $("#point").css({
-                top: e.offsetY,
-                left: e.offsetX
+                top: offsetY,
+                left: offsetX
             });
-            updatePoint(e.offsetX, e.offsetY);
+            updatePoint(offsetX, offsetY);
         }
     }
 };
@@ -252,18 +255,22 @@ $(function(){
     $("canvas").each(function(el){
         this.width = 400;
         this.height = 300;
+
         $(this).mousemove(function(e){
             if(g_mode == "slide"){
                 return true;
             }
             var startX = $.data(this, "px");
             var startY = $.data(this, "py");
-            var x = e.offsetX;
-            var y = e.offsetY;
+            var off = $(this).offset();
+            var offsetX = e.clientX - off.left; 
+            var offsetY = e.clientY - off.top;
+            var x = offsetX;
+            var y = offsetY;
             console.log(x + " " + y);
             if($.data(this, "mousedowning") && startX != null && startY != null){ 
-                var x = e.offsetX;
-                var y = e.offsetY;
+                var x = offsetX;
+                var y = offsetY;
                 var context = this.getContext("2d");
                 context.beginPath();             // パスのリセット
                 context.lineWidth = 1;           // 線の太さ
