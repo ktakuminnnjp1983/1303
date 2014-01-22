@@ -38,9 +38,10 @@ Meteor.startup(function() {
         changed: function(id, fields) {
             if(fields.point !== undefined){
                 if($("#syncCheck").prop("checked")){
+                    var off = $g_viewport.offset();
                     $("#point").css({
-                        top: $g_viewport.get(0).offsetTop + fields.point.y,
-                        left: $g_viewport.get(0).offsetLeft + fields.point.x
+                        top: off.top + fields.point.y,
+                        left: off.left + fields.point.x
                     });
                 } 
             }
