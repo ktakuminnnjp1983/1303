@@ -1,4 +1,5 @@
-var socket = new WebSocket("ws://192.168.11.10:3000");
+// var socket = new WebSocket("ws://192.168.11.10:3000");
+var socket = new WebSocket("ws://172.27.66.36:3000");
 
 socket.onopen = function(){
     console.log("Client onopen");
@@ -90,6 +91,7 @@ $(function(){
         var reader = new FileReader();
         reader.onload = function(e){
             console.log(reader.result);
+            console.log(reader.result.constructor);
             var buf = new Uint8Array(reader.result);
             console.log("read arrayBuffer %d", buf.length);
             socket.send(buf);

@@ -244,18 +244,18 @@ $(function(){
 
     // $("#mainFrame").resizable({handles: "e"});
     
-    var successCallback = function(stream) {
-        var video = jQuery("#chat");
-        var videoStream = window.webkitURL ? window.webkitURL.createObjectURL(stream) : stream;
-        video.attr("src", videoStream);
-    };
-    var failCallback = function(error) {
-        alert("error... code : " + error.code);
-    };
-    navigator.webkitGetUserMedia(
-        {video: false, audio: true},
-        successCallback, 
-        failCallback
-    );
+    // var successCallback = function(stream) {
+        // var video = jQuery("#chat");
+        // var videoStream = window.webkitURL ? window.webkitURL.createObjectURL(stream) : stream;
+        // video.attr("src", videoStream);
+    // };
+    // var failCallback = function(error) {
+        // alert("error... code : " + error.code);
+    // };
+    // navigator.webkitGetUserMedia(
+        // {video: false, audio: true},
+        // successCallback, 
+        // failCallback
+    // );
 });
 
