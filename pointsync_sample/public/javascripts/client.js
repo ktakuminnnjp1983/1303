@@ -20,9 +20,12 @@ socket.on('syncPoint', function(data){
 
 // events
 $('#moveArea').mousemove(function(e){
-    socket.emit("mouseMove", { x: e.offsetX, y: e.offsetY });
-    $('#dispArea').html("x: " + e.offsetX + ", y:" + e.offsetY);
-    $('#point').css({ top : e.clientY, left : e.clientX, display : "block"});
+    var off = $(this).offset();
+    var offsetX = e.pageX - off.left;
+    var offsetY = e.pageY - off.top;
+    socket.emit("mouseMove", { x: offsetX, y: offsetY });
+    $('#dispArea').html("x: " + offsetX + ", y:" + offsetY);
+    $('#point').css({ top : off.top + offsetY, left : off.left + offsetX, display : "block"});
 });
 
 });

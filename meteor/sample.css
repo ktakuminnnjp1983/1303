@@ -44,28 +44,29 @@ html, body{
 }
 
 #viewport {
-    width: 320px;
+    width: 400px;
+    height:300px;
     overflow: hidden;
     margin: 0 auto;
 }
 #flipsnap {
-    width: 3200px; /* 320px(item width) * 3(item count) */
+    width: 4000px; /* 320px(item width) * 3(item count) */
+    height:300px;
 }
 .item {
     float: left;
-    width: 310px;
     font-size: 50px;
     text-align: center;
-    padding: 50px 0;
     background: #EFEFEF;
-    border: 5px solid #999;
     color: #666;
     cursor: pointer;
+    z-index:-1;
 }
 #point {
-    position: relative;
-    display: none;
+    position: absolute;
     width:5px;
     height:5px;
     background-color:black;
+    z-index:4000;
+    display:none;
 }

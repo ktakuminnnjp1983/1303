@@ -63,11 +63,14 @@
 <div id="viewport">
     <div id="flipsnap">
         {{#each slides}}
-            <div class="item">{{no}}</div>
+        <canvas class="item" id="canvas_{{no}}"></canvas>
         {{/each}}
     </div>
     <div id="point"></div>
 </div>
+スライド<input type="radio" name="selectMode" value="slide" checked></input><br/>
+えんぴつ<input type="radio" name="selectMode" value="pen"></input><br/>
+けしごむ<input type="radio" name="selectMode" value="erase"></input><br/>
 </template>
 
 <template name="test">

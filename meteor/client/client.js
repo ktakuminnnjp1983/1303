@@ -1,4 +1,5 @@
 console.log("Read client");
+$g_viewport = undefined;
 
 function isMaster(){
     return location.hash === "#master";
@@ -30,14 +31,16 @@ Meteor.startup(function() {
     );
     Session.set("user_id", user_id);
 
+    $g_viewport = $("#viewport");
+
     // sync master slide no
     MasterSlideNo.find().observeChanges({
         changed: function(id, fields) {
             if(fields.point !== undefined){
                 if($("#syncCheck").prop("checked")){
                     $("#point").css({
-                        top: fields.point.y,
-                        left: fields.point.x
+                        top: $g_viewport.get(0).offsetTop + fields.point.y,
+                        left: $g_viewport.get(0).offsetLeft + fields.point.x
                     });
                 } 
             }
@@ -225,7 +228,7 @@ Template.resetArea.events = {
     }
 };
 
-
+var g_mode = "slide";
 $(function(){
     console.log("DOM Ready");
     if(location.hash == "#master"){
@@ -241,6 +244,51 @@ $(function(){
             setMasterSlideNo(g_flipsnap.currentPoint);
         }
     }, false);
+
+    $("input[name=selectMode]:radio").change(function(e){
+        g_mode = this.value;
+    });
+
+    $("canvas").each(function(el){
+        this.width = 400;
+        this.height = 300;
+        $(this).mousemove(function(e){
+            if(g_mode == "slide"){
+                return true;
+            }
+            var startX = $.data(this, "px");
+            var startY = $.data(this, "py");
+            var x = e.offsetX;
+            var y = e.offsetY;
+            console.log(x + " " + y);
+            if($.data(this, "mousedowning") && startX != null && startY != null){ 
+                var x = e.offsetX;
+                var y = e.offsetY;
+                var context = this.getContext("2d");
+                context.beginPath();             // パスのリセット
+                context.lineWidth = 1;           // 線の太さ
+                context.strokeStyle="#ff0000";   // 線の色
+                context.moveTo(startX, startY);           // 開始位置
+                context.lineTo(x, y);         // 次の位置
+                console.log(x + " " + y);
+                context.stroke();    
+            }    
+            $.data(this, "px", x);
+            $.data(this, "py", y);
+            e.stopPropagation();
+        });
+        $(this).mousedown(function(e){
+            $.data(this, "mousedowning", true);
+        });
+        $(this).mouseup(function(e){
+            $.data(this, "mousedowning", false);
+        });
+        $(this).mouseleave(function(e){
+            $.data(this, "px", null);
+            $.data(this, "py", null);
+            $.data(this, "mousedowning", false);
+        });
+    });
 
     // $("#mainFrame").resizable({handles: "e"});
     
