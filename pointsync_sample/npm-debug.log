@@ -1,0 +1,188 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/home/kobayashi/gitdirs/nvm/v0.11.10/bin/node',
+1 verbose cli   '/home/kobayashi/gitdirs/nvm/v0.11.10/bin/npm',
+1 verbose cli   'install' ]
+2 info using npm@1.3.22
+3 info using node@v0.11.10
+4 verbose readDependencies using package.json deps
+5 verbose install where, deps [ '/home/kobayashi/workspace/prizm_2013/pointsync_sample',
+5 verbose install   [ 'express', 'ejs', 'socket.io', 'sock.i' ] ]
+6 info preinstall application-name@0.0.1
+7 verbose readDependencies using package.json deps
+8 verbose cache add [ 'ejs@*', null ]
+9 verbose cache add name=undefined spec="ejs@*" args=["ejs@*",null]
+10 verbose parsed url { protocol: null,
+10 verbose parsed url   slashes: null,
+10 verbose parsed url   auth: null,
+10 verbose parsed url   host: null,
+10 verbose parsed url   port: null,
+10 verbose parsed url   hostname: null,
+10 verbose parsed url   hash: null,
+10 verbose parsed url   search: null,
+10 verbose parsed url   query: null,
+10 verbose parsed url   pathname: 'ejs@*',
+10 verbose parsed url   path: 'ejs@*',
+10 verbose parsed url   href: 'ejs@*' }
+11 verbose cache add name="ejs" spec="*" args=["ejs","*"]
+12 verbose parsed url { protocol: null,
+12 verbose parsed url   slashes: null,
+12 verbose parsed url   auth: null,
+12 verbose parsed url   host: null,
+12 verbose parsed url   port: null,
+12 verbose parsed url   hostname: null,
+12 verbose parsed url   hash: null,
+12 verbose parsed url   search: null,
+12 verbose parsed url   query: null,
+12 verbose parsed url   pathname: '*',
+12 verbose parsed url   path: '*',
+12 verbose parsed url   href: '*' }
+13 verbose addNamed [ 'ejs', '*' ]
+14 verbose addNamed [ null, '*' ]
+15 silly lockFile 9d73ed50-ejs ejs@*
+16 verbose lock ejs@* /home/kobayashi/.npm/9d73ed50-ejs.lock
+17 verbose cache add [ 'socket.io@0.9.16', null ]
+18 verbose cache add name=undefined spec="socket.io@0.9.16" args=["socket.io@0.9.16",null]
+19 verbose parsed url { protocol: null,
+19 verbose parsed url   slashes: null,
+19 verbose parsed url   auth: null,
+19 verbose parsed url   host: null,
+19 verbose parsed url   port: null,
+19 verbose parsed url   hostname: null,
+19 verbose parsed url   hash: null,
+19 verbose parsed url   search: null,
+19 verbose parsed url   query: null,
+19 verbose parsed url   pathname: 'socket.io@0.9.16',
+19 verbose parsed url   path: 'socket.io@0.9.16',
+19 verbose parsed url   href: 'socket.io@0.9.16' }
+20 verbose cache add name="socket.io" spec="0.9.16" args=["socket.io","0.9.16"]
+21 verbose parsed url { protocol: null,
+21 verbose parsed url   slashes: null,
+21 verbose parsed url   auth: null,
+21 verbose parsed url   host: null,
+21 verbose parsed url   port: null,
+21 verbose parsed url   hostname: null,
+21 verbose parsed url   hash: null,
+21 verbose parsed url   search: null,
+21 verbose parsed url   query: null,
+21 verbose parsed url   pathname: '0.9.16',
+21 verbose parsed url   path: '0.9.16',
+21 verbose parsed url   href: '0.9.16' }
+22 verbose addNamed [ 'socket.io', '0.9.16' ]
+23 verbose addNamed [ '0.9.16', '0.9.16' ]
+24 silly lockFile a7acce22-socket-io-0-9-16 socket.io@0.9.16
+25 verbose lock socket.io@0.9.16 /home/kobayashi/.npm/a7acce22-socket-io-0-9-16.lock
+26 verbose cache add [ 'sock.i@0.9.16', null ]
+27 verbose cache add name=undefined spec="sock.i@0.9.16" args=["sock.i@0.9.16",null]
+28 verbose parsed url { protocol: null,
+28 verbose parsed url   slashes: null,
+28 verbose parsed url   auth: null,
+28 verbose parsed url   host: null,
+28 verbose parsed url   port: null,
+28 verbose parsed url   hostname: null,
+28 verbose parsed url   hash: null,
+28 verbose parsed url   search: null,
+28 verbose parsed url   query: null,
+28 verbose parsed url   pathname: 'sock.i@0.9.16',
+28 verbose parsed url   path: 'sock.i@0.9.16',
+28 verbose parsed url   href: 'sock.i@0.9.16' }
+29 verbose cache add name="sock.i" spec="0.9.16" args=["sock.i","0.9.16"]
+30 verbose parsed url { protocol: null,
+30 verbose parsed url   slashes: null,
+30 verbose parsed url   auth: null,
+30 verbose parsed url   host: null,
+30 verbose parsed url   port: null,
+30 verbose parsed url   hostname: null,
+30 verbose parsed url   hash: null,
+30 verbose parsed url   search: null,
+30 verbose parsed url   query: null,
+30 verbose parsed url   pathname: '0.9.16',
+30 verbose parsed url   path: '0.9.16',
+30 verbose parsed url   href: '0.9.16' }
+31 verbose addNamed [ 'sock.i', '0.9.16' ]
+32 verbose addNamed [ '0.9.16', '0.9.16' ]
+33 silly lockFile bc8eb7df-sock-i-0-9-16 sock.i@0.9.16
+34 verbose lock sock.i@0.9.16 /home/kobayashi/.npm/bc8eb7df-sock-i-0-9-16.lock
+35 verbose cache add [ 'express@3.4.8', null ]
+36 verbose cache add name=undefined spec="express@3.4.8" args=["express@3.4.8",null]
+37 verbose parsed url { protocol: null,
+37 verbose parsed url   slashes: null,
+37 verbose parsed url   auth: null,
+37 verbose parsed url   host: null,
+37 verbose parsed url   port: null,
+37 verbose parsed url   hostname: null,
+37 verbose parsed url   hash: null,
+37 verbose parsed url   search: null,
+37 verbose parsed url   query: null,
+37 verbose parsed url   pathname: 'express@3.4.8',
+37 verbose parsed url   path: 'express@3.4.8',
+37 verbose parsed url   href: 'express@3.4.8' }
+38 verbose cache add name="express" spec="3.4.8" args=["express","3.4.8"]
+39 verbose parsed url { protocol: null,
+39 verbose parsed url   slashes: null,
+39 verbose parsed url   auth: null,
+39 verbose parsed url   host: null,
+39 verbose parsed url   port: null,
+39 verbose parsed url   hostname: null,
+39 verbose parsed url   hash: null,
+39 verbose parsed url   search: null,
+39 verbose parsed url   query: null,
+39 verbose parsed url   pathname: '3.4.8',
+39 verbose parsed url   path: '3.4.8',
+39 verbose parsed url   href: '3.4.8' }
+40 verbose addNamed [ 'express', '3.4.8' ]
+41 verbose addNamed [ '3.4.8', '3.4.8' ]
+42 silly lockFile 15cb8528-express-3-4-8 express@3.4.8
+43 verbose lock express@3.4.8 /home/kobayashi/.npm/15cb8528-express-3-4-8.lock
+44 silly addNameRange { name: 'ejs', range: '*', hasData: false }
+45 verbose url raw sock.i/0.9.16
+46 verbose url resolving [ 'http://registry.npmjs.org/', './sock.i/0.9.16' ]
+47 verbose url resolved http://registry.npmjs.org/sock.i/0.9.16
+48 info trying registry request attempt 1 at 13:10:52
+49 http GET http://registry.npmjs.org/sock.i/0.9.16
+50 verbose url raw socket.io/0.9.16
+51 verbose url resolving [ 'http://registry.npmjs.org/', './socket.io/0.9.16' ]
+52 verbose url resolved http://registry.npmjs.org/socket.io/0.9.16
+53 info trying registry request attempt 1 at 13:10:52
+54 http GET http://registry.npmjs.org/socket.io/0.9.16
+55 verbose url raw express/3.4.8
+56 verbose url resolving [ 'http://registry.npmjs.org/', './express/3.4.8' ]
+57 verbose url resolved http://registry.npmjs.org/express/3.4.8
+58 info trying registry request attempt 1 at 13:10:52
+59 http GET http://registry.npmjs.org/express/3.4.8
+60 verbose url raw ejs
+61 verbose url resolving [ 'http://registry.npmjs.org/', './ejs' ]
+62 verbose url resolved http://registry.npmjs.org/ejs
+63 info trying registry request attempt 1 at 13:10:52
+64 verbose etag "EGKZ2SPXZCPSYJFGLXZH0HOYM"
+65 http GET http://registry.npmjs.org/ejs
+66 http 404 http://registry.npmjs.org/sock.i/0.9.16
+67 silly registry.get cb [ 404,
+67 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R15B03)',
+67 silly registry.get     'content-type': 'application/json',
+67 silly registry.get     'cache-control': 'max-age=0',
+67 silly registry.get     'content-length': '52',
+67 silly registry.get     'accept-ranges': 'bytes',
+67 silly registry.get     date: 'Wed, 22 Jan 2014 04:11:08 GMT',
+67 silly registry.get     age: '0',
+67 silly registry.get     'x-served-by': 'cache-ty66-TYO',
+67 silly registry.get     'x-cache': 'MISS, MISS from proxy.fujixerox.co.jp, MISS from yb12115792, MISS from proxy.kdc.fujixerox.co.jp',
+67 silly registry.get     'x-cache-hits': '0',
+67 silly registry.get     'x-timer': 'S1390363868.789608955,VS0,VE155',
+67 silly registry.get     'x-cache-lookup': 'MISS from proxy.kdc.fujixerox.co.jp:8080',
+67 silly registry.get     via: '1.1 varnish, 1.0 proxy15.dc.fxis.co.jp (squid/3.1-rock-BZR)',
+67 silly registry.get     connection: 'close' } ]
+68 silly lockFile bc8eb7df-sock-i-0-9-16 sock.i@0.9.16
+69 silly lockFile bc8eb7df-sock-i-0-9-16 sock.i@0.9.16
+70 error 404 'sock.i' is not in the npm registry.
+70 error 404 You should bug the author to publish it
+70 error 404 It was specified as a dependency of 'application-name'
+70 error 404
+70 error 404 Note that you can also install from a
+70 error 404 tarball, folder, or http url, or git url.
+71 error System Linux 2.6.31.14-0.2-desktop
+72 error command "/home/kobayashi/gitdirs/nvm/v0.11.10/bin/node" "/home/kobayashi/gitdirs/nvm/v0.11.10/bin/npm" "install"
+73 error cwd /home/kobayashi/workspace/prizm_2013/pointsync_sample
+74 error node -v v0.11.10
+75 error npm -v 1.3.22
+76 error code E404
+77 verbose exit [ 1, true ]
