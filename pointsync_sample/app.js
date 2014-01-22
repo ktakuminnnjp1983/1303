@@ -49,4 +49,8 @@ io.sockets.on('connection', function(socket){
     	g_x = msg.x;
     	g_y = msg.y;
     });
+    socket.on("binaryFile", function(file){
+    	console.log("SSSSSS " + file.val.constructor);
+        socket.broadcast.emit("fileBroadcast", {val: file.val});
+    });
 });

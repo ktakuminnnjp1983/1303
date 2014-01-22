@@ -1,5 +1,5 @@
-// var socket = new WebSocket("ws://192.168.11.10:3000");
-var socket = new WebSocket("ws://172.27.66.36:3000");
+var socket = new WebSocket("ws://192.168.11.10:3000");
+//var socket = new WebSocket("ws://172.27.66.36:3000");
 
 socket.onopen = function(){
     console.log("Client onopen");
@@ -71,7 +71,7 @@ $(function(){
     });
 
     $("#fileUpString").change(function(event){
-        var f = $("#fileUpString").get(0).files[0];
+        var f = this.files[0];
         var reader = new FileReader();
         reader.onload = function(e){
             console.log("read binarySting %d", reader.result.length);
@@ -81,13 +81,13 @@ $(function(){
     });
     $("#fileUpBlob").change(function(event){
         socket.binaryType = "blob";
-        var f = $("#fileUpBlob").get(0).files[0];
+        var f = this.files[0];
         console.log("upload blob(file) %d", f.size);
         socket.send(f);
     });
     $("#fileUpArrayBuffer").change(function(event){
         socket.binaryType = "arraybuffer";
-        var f = $("#fileUpArrayBuffer").get(0).files[0];
+        var f = this.files[0];
         var reader = new FileReader();
         reader.onload = function(e){
             console.log(reader.result);

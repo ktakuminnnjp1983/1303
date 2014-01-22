@@ -1,5 +1,6 @@
 console.log("Read client");
-$g_viewport = undefined;
+
+var g_socket = null;
 
 function isMaster(){
     return location.hash === "#master";
@@ -18,6 +19,33 @@ function updatePoint(x, y){
 Meteor.startup(function() {
     console.log("Client startup");
     
+    g_socket = new WebSocket("ws://192.168.11.10:3010");
+    //var socket = new WebSocket("ws://172.27.66.36:3000");
+    g_socket.onopen = function(){
+        console.log("Client onopen connect WebSocket-Node");
+        var test = {
+            key: "test",
+            val: "testval",
+            bloadcast: "false"
+        };
+        g_socket.send(JSON.stringify(test));
+    };
+    g_socket.onmessage = function(message){
+        if(message.data.constructor === String){
+            var obj = JSON.parse(message.data);
+            if(obj.key == "slidePoint"){
+                // console.log(obj.val.x + " " + obj.val.y);
+                var off = $("#viewport").offset();
+                $("#point").css({
+                    top: off.top + obj.val.y,
+                    left: off.left + obj.val.x
+                });
+            } else if(obj.key == "canvasStroke"){
+                console.log(obj.val.id + " " + obj.val.x + " " + obj.val.y);
+            }
+        }
+    };
+
     Meteor.subscribe("watchers");
     Meteor.subscribe("masterSlideNo");
     Meteor.subscribe("opinions");
@@ -29,16 +57,15 @@ Meteor.startup(function() {
             last_keepalive: (new Date()).getTime()
         }
     );
+    
     Session.set("user_id", user_id);
-
-    $g_viewport = $("#viewport");
 
     // sync master slide no
     MasterSlideNo.find().observeChanges({
         changed: function(id, fields) {
             if(fields.point !== undefined){
                 if($("#syncCheck").prop("checked")){
-                    var off = $g_viewport.offset();
+                    var off = $("#viewport").offset();
                     $("#point").css({
                         top: off.top + fields.point.y,
                         left: off.left + fields.point.x
@@ -171,7 +198,14 @@ Template.displaySlide.events = {
                 top: offsetY,
                 left: offsetX
             });
-            updatePoint(offsetX, offsetY);
+            
+            // updatePoint(offsetX, offsetY);
+            
+            var obj = {
+                key:"slidePoint",
+                val:{x: offsetX, y: offsetY}
+            };
+            g_socket.send(JSON.stringify(obj));
         }
     }
 };
@@ -274,15 +308,25 @@ $(function(){
                 var y = offsetY;
                 var context = this.getContext("2d");
                 context.beginPath();             // パスのリセット
-                context.lineWidth = 1;           // 線の太さ
+                context.lineWidth = 5;           // 線の太さ
                 context.strokeStyle="#ff0000";   // 線の色
                 context.moveTo(startX, startY);           // 開始位置
                 context.lineTo(x, y);         // 次の位置
-                console.log(x + " " + y);
                 context.stroke();    
+                
+                var obj ={
+                    key: "canvasStroke",
+                    val: {
+                        id: $(this).attr("id"),
+                        x: x,
+                        y: y
+                    }
+                };
+                g_socket.send(JSON.stringify(obj));
             }    
             $.data(this, "px", x);
             $.data(this, "py", y);
+
             e.stopPropagation();
         });
         $(this).mousedown(function(e){
@@ -290,11 +334,29 @@ $(function(){
         });
         $(this).mouseup(function(e){
             $.data(this, "mousedowning", false);
+            var obj ={
+                key: "canvasStroke",
+                val: {
+                    id: $(this).attr("id"),
+                    x: -1,
+                    y: -1
+                }
+            };
+            g_socket.send(JSON.stringify(obj));
         });
         $(this).mouseleave(function(e){
             $.data(this, "px", null);
             $.data(this, "py", null);
             $.data(this, "mousedowning", false);
+            var obj ={
+                key: "canvasStroke",
+                val: {
+                    id: $(this).attr("id"),
+                    x: -1,
+                    y: -1
+                }
+            };
+            g_socket.send(JSON.stringify(obj));
         });
     });
 

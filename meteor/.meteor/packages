@@ -9,3 +9,5 @@ preserve-inputs
 jquery
 accounts-twitter
 accounts-ui
+bootstrap
+npm
