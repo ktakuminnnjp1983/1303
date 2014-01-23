@@ -53,12 +53,14 @@ html, body{
     width: 7000px; /* 320px(item width) * 3(item count) */
     height:500px;
 }
-.item {
+.canvasWrapper {
     float: left;
-    font-size: 50px;
-    text-align: center;
-    background: #EFEFEF;
-    color: #666;
+    width: 700px;
+    height:500px;
+    background-image: url(/imgs/700x500.jpeg)
+}
+.item {
+    background-color: transparent;
     cursor: pointer;
 }
 #point {

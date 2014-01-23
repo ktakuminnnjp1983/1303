@@ -64,8 +64,16 @@ Meteor.startup(function() {
                     }
                     // draw
                     var context = $("#" + id).get(0).getContext("2d");
+                    var lineWidth;
+                    if(obj.val.mode == "pen"){
+                        context.globalCompositeOperation = "source-over";
+                        lineWidth = 5;
+                    } else{
+                        context.globalCompositeOperation = "destination-out";
+                        lineWidth = 10;
+                    }
                     context.beginPath();             // パスのリセット
-                    context.lineWidth = 5;           // 線の太さ
+                    context.lineWidth = lineWidth;           // 線の太さ
                     context.strokeStyle="#ff0000";   // 線の色
                     context.moveTo(px, py);           // 開始位置
                     context.lineTo(x, y);         // 次の位置
@@ -155,13 +163,16 @@ Template.opinionsResult.helpers({
     }
 });
 Template.resetArea.helpers({
-    isAdmin: function(){
+    isMaster: function(){
         return location.hash == "#master";
     }
 });
 Template.displaySlide.helpers({
-    slides: function(){
-        return [{no:0},{no:1},{no:2},{no:3},{no:4},{no:5},{no:6},{no:7},{no:8},{no:9}];
+    slidesInfo: function(){
+        return {
+            isMaster: location.hash == "#master",
+            slides: [{no:0},{no:1},{no:2},{no:3},{no:4},{no:5},{no:6},{no:7},{no:8},{no:9}]
+        }
     }
 });
 Template.commentsArea.helpers({
@@ -298,6 +309,7 @@ Template.resetArea.events = {
 };
 
 var g_mode = "slide";
+var g_lineWidth;
 $(function(){
     console.log("DOM Ready");
     if(location.hash == "#master"){
@@ -316,17 +328,30 @@ $(function(){
 
     $("input[name=selectMode]:radio").change(function(e){
         g_mode = this.value;
+        if(g_mode === "erase"){
+            $("canvas").each(function(){
+                var context = this.getContext("2d");
+                context.globalCompositeOperation = "destination-out";
+                g_lineWidth = 10;
+            });
+        } else{
+            $("canvas").each(function(){
+                var context = this.getContext("2d");
+                context.globalCompositeOperation = "source-over";
+                g_lineWidth = 5;
+            });
+        }
     });
 
     $("canvas").each(function(el){
         this.width = 700;
         this.height = 500;
         var context = this.getContext("2d");
-        var img = new Image();
-        img.src = "/imgs/700x500.jpeg";
-        img.onload = function(){
-            context.drawImage(img, 0, 0);
-        }
+        // var img = new Image();
+        // img.src = "/imgs/700x500.jpeg";
+        // img.onload = function(){
+            // context.drawImage(img, 0, 0);
+        // }
 
         $(this).mousemove(function(e){
             if(isMaster() == false){
@@ -347,7 +372,7 @@ $(function(){
                 var y = offsetY;
                 var context = this.getContext("2d");
                 context.beginPath();             // パスのリセット
-                context.lineWidth = 5;           // 線の太さ
+                context.lineWidth = g_lineWidth;           // 線の太さ
                 context.strokeStyle="#ff0000";   // 線の色
                 context.moveTo(startX, startY);           // 開始位置
                 context.lineTo(x, y);         // 次の位置
@@ -358,7 +383,8 @@ $(function(){
                     val: {
                         id: $(this).attr("id"),
                         x: x,
-                        y: y
+                        y: y,
+                        mode: g_mode 
                     }
                 };
                 g_socket.send(JSON.stringify(obj));

@@ -54,7 +54,7 @@
 </template>
 
 <template name="resetArea">
-    {{#if isAdmin}}
+    {{#if isMaster}}
     <input type="button" id="resetButton" value="リセット"></input><br>
     {{/if}}
 </template>
@@ -62,15 +62,17 @@
 <template name="displaySlide">
 <div id="viewport">
     <div id="flipsnap">
-        {{#each slides}}
-        <canvas class="item" id="canvas_{{no}}"></canvas>
+        {{#each slidesInfo.slides}}
+        <div class="canvasWrapper"><canvas class="item" id="canvas_{{no}}"></canvas></div>
         {{/each}}
     </div>
     <div id="point"></div>
 </div>
+{{#if slidesInfo.isMaster}}
 スライド<input type="radio" name="selectMode" value="slide" checked></input><br/>
 えんぴつ<input type="radio" name="selectMode" value="pen"></input><br/>
 けしごむ<input type="radio" name="selectMode" value="erase"></input><br/>
+{{/if}}
 </template>
 
 <template name="test">
