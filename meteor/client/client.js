@@ -319,8 +319,14 @@ $(function(){
     });
 
     $("canvas").each(function(el){
-        this.width = 400;
-        this.height = 300;
+        this.width = 700;
+        this.height = 500;
+        var context = this.getContext("2d");
+        var img = new Image();
+        img.src = "/imgs/700x500.jpeg";
+        img.onload = function(){
+            context.drawImage(img, 0, 0);
+        }
 
         $(this).mousemove(function(e){
             if(isMaster() == false){

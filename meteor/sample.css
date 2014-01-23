@@ -44,14 +44,14 @@ html, body{
 }
 
 #viewport {
-    width: 400px;
-    height:300px;
+    width: 700px;
+    height:500px;
     overflow: hidden;
     margin: 0 auto;
 }
 #flipsnap {
-    width: 4000px; /* 320px(item width) * 3(item count) */
-    height:300px;
+    width: 7000px; /* 320px(item width) * 3(item count) */
+    height:500px;
 }
 .item {
     float: left;
@@ -60,13 +60,11 @@ html, body{
     background: #EFEFEF;
     color: #666;
     cursor: pointer;
-    z-index:-1;
 }
 #point {
     position: absolute;
     width:5px;
     height:5px;
     background-color:black;
-    z-index:4000;
     display:none;
 }
