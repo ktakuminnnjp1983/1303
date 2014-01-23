@@ -44,6 +44,7 @@ wsServer.on("request", function(request){
             }
         } else if(message.type == "binary"){
             console.log(message.binaryData.constructor);
+            console.log(message.binaryData);
             for(var i=0; i<connections.length; ++i){
                 if(connections[i] !== connection){
                     connections[i].send(message.binaryData); // Buffer node.js

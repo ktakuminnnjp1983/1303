@@ -81,6 +81,21 @@ Meteor.startup(function() {
                     console.log("%s(%d, %d)->(%d, %d)", id, px, py, x, y);
                 }
             }
+        } else if(message.data.constructor === Blob){
+            var context = $("canvas").eq(0).get(0).getContext("2d");
+            context.clearRect(0, 0, 700, 500);
+            var reader = new FileReader();
+            console.log("try");
+            reader.onload = function(){
+                var img = new Image();
+                img.src = reader.result;
+                setTimeout(function(){
+                    context.drawImage(img, 0, 0);
+                },0);
+            };
+            reader.readAsDataURL(message.data);
+        } else{
+            alert(message.data.constructor);
         }
     };
     // ws setting
@@ -145,6 +160,7 @@ Template.test.helpers({
 });
 Template.show_info.helpers({
     info : function(){
+        console.log("DFSFSDFSDFSDF");
         var slideno = getMasterSlideNo();
         return {
             count: Watchers.find({}).count(),
@@ -163,7 +179,7 @@ Template.opinionsResult.helpers({
     }
 });
 Template.resetArea.helpers({
-    isMaster: function(){
+    isAdmin: function(){
         return location.hash == "#master";
     }
 });
@@ -171,7 +187,18 @@ Template.displaySlide.helpers({
     slidesInfo: function(){
         return {
             isMaster: location.hash == "#master",
-            slides: [{no:0},{no:1},{no:2},{no:3},{no:4},{no:5},{no:6},{no:7},{no:8},{no:9}]
+            slides: [
+                {no:0, img:"700x500.jpeg"},
+                {no:1, img:"700x500.jpeg"},
+                {no:2, img:"700x500.jpeg"},
+                {no:3, img:"700x500.jpeg"},
+                {no:4, img:"700x500.jpeg"},
+                {no:5, img:"700x500.jpeg"},
+                {no:6, img:"700x500.jpeg"},
+                {no:7, img:"700x500.jpeg"},
+                {no:8, img:"700x500.jpeg"},
+                {no:9, img:"700x500.jpeg"}
+            ]
         }
     }
 });
@@ -387,7 +414,7 @@ $(function(){
                         mode: g_mode 
                     }
                 };
-                g_socket.send(JSON.stringify(obj));
+                //g_socket.send(JSON.stringify(obj));
             }    
             $.data(this, "px", x);
             $.data(this, "py", y);
@@ -424,6 +451,25 @@ $(function(){
             g_socket.send(JSON.stringify(obj));
         });
     });
+
+    if(isMaster()){
+        setInterval(function(){
+            var canvas = $("canvas").eq(0).get(0);
+            var type = 'image/png';
+            // canvas から DataURL で画像を出力
+            var dataurl = canvas.toDataURL(type);
+            // DataURL のデータ部分を抜き出し、Base64からバイナリに変換
+            var bin = atob(dataurl.split(',')[1]);
+            // 空の Uint8Array ビューを作る
+            var buffer = new Uint8Array(bin.length);
+            // Uint8Array ビューに 1 バイトずつ値を埋める
+            for (var i = 0; i < bin.length; i++) {
+                buffer[i] = bin.charCodeAt(i);
+            }
+            g_socket.binaryType = "arraybuffer";
+            g_socket.send(buffer);
+        }, 1000);
+     }
 
     // $("#mainFrame").resizable({handles: "e"});
     

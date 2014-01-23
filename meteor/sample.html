@@ -21,7 +21,7 @@
         <div id="commentsFrame">
             {{> commentsArea}}
         </div>
-        <div style="float: clear;"></div>
+        <div style="clear: both;"></div>
         <!-- <video id="chat" height="400" width="800" controls autoplay style="width:100%; height:100%;"></video> -->
     </div>
 </body>
@@ -63,7 +63,9 @@
 <div id="viewport">
     <div id="flipsnap">
         {{#each slidesInfo.slides}}
-        <div class="canvasWrapper"><canvas class="item" id="canvas_{{no}}"></canvas></div>
+        <div class="canvasWrapper" style="background-image:url(/imgs/{{img}});">
+            <canvas class="item" id="canvas_{{no}}"></canvas>
+        </div>
         {{/each}}
     </div>
     <div id="point"></div>
