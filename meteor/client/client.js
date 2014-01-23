@@ -223,8 +223,8 @@ Template.displaySlide.events = {
     "mousemove .item": function(e, template){
         if(isMaster()){
             var off = $(e.target).offset();
-            var offsetX = e.clientX - off.left; 
-            var offsetY = e.clientY - off.top;
+            var offsetX = e.pageX - off.left; 
+            var offsetY = e.pageY - off.top;
             $("#point").css({
                 top: offsetY,
                 left: offsetX
@@ -324,7 +324,7 @@ $(function(){
 
         $(this).mousemove(function(e){
             if(isMaster() == false){
-                return false;
+                return true;
             }
             if(g_mode == "slide"){
                 return true;
@@ -332,8 +332,8 @@ $(function(){
             var startX = $.data(this, "px");
             var startY = $.data(this, "py");
             var off = $(this).offset();
-            var offsetX = e.clientX - off.left; 
-            var offsetY = e.clientY - off.top;
+            var offsetX = e.pageX - off.left; 
+            var offsetY = e.pageY - off.top;
             var x = offsetX;
             var y = offsetY;
             if($.data(this, "mousedowning") && startX != null && startY != null){ 
