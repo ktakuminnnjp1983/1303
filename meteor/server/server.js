@@ -74,6 +74,9 @@ Meteor.startup(function () {
     Meteor.publish("comments", function(){
         return Comments.find();
     });
+    Meteor.publish("slideImgs", function(){
+        return SlideImgs.find();
+    });
 
     Watchers.allow({
         // データの挿入を許可するか
@@ -132,25 +135,57 @@ Meteor.startup(function () {
         },
         fetch: undefined
     });
+    SlideImgs.allow({
+        insert: function(userId, doc) {
+            return true;
+        },
+        update: function(userId, docs, fields, modifier) {
+            return true;
+
+        },
+        remove: function(userId, docs) {
+            return true;
+        },
+        fetch: undefined
+    });
     
     Watchers.remove({});
-    MasterSlideNo.remove({});
-    Opinions.remove({});
-    Comments.remove({});
+    // MasterSlideNo.remove({});
+    // Opinions.remove({});
+    // Comments.remove({});
+    // SlideImgs.remove({});
     
-    MasterSlideNo.insert({
-        no: 0, 
-        name:"slideno",
-        point: {x:0, y:0}
-    });
+    if(MasterSlideNo.find().count() == 0){
+        MasterSlideNo.insert({
+            no: 0, 
+            name:"slideno",
+            point: {x:0, y:0}
+        });
+    }
     
-    var opinions = [
-        { name: "good", count: 0 },
-        { name: "bad", count: 0 }
-    ];
-    opinions.forEach(function(op){
-        Opinions.insert(op);
-    });
+    if(Opinions.find().count() == 0){
+        var opinions = [
+            { name: "good", count: 0 },
+            { name: "bad", count: 0 }
+        ];
+        opinions.forEach(function(op){
+            Opinions.insert(op);
+        });
+    }
+
+    if(SlideImgs.find().count() == 0){
+        var imgs = [];
+        for(var i=0; i<10; ++i){
+            imgs.push({
+                no: i,
+                id: "canvas_" + i,
+                dataURL: ""
+            });
+        }
+        imgs.forEach(function(img){
+            SlideImgs.insert(img);
+        });
+    }
 
     Meteor.onConnection(function(connection){
         console.log("Connection id[%s]", connection.id);

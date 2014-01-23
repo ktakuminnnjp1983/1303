@@ -6,6 +6,7 @@ Watchers = new Meteor.Collection("watchers");
 Opinions = new Meteor.Collection("opinions");
 MasterSlideNo = new Meteor.Collection("masterSlideNo");
 Comments = new Meteor.Collection("comments");
+SlideImgs = new Meteor.Collection("slideImgs");
 
 // 共通methods
 getMasterSlideNo = function(){

@@ -62,8 +62,8 @@ html, body{
 }
 #point {
     position: absolute;
-    width:5px;
-    height:5px;
-    background-color:black;
+    width:10px;
+    height:10px;
+    background-color:blue;
     display:none;
 }
