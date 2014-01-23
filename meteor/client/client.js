@@ -1,6 +1,7 @@
 console.log("Read client");
 
 var g_socket = null;
+var g_canvasStrokes = {};
 
 function isMaster(){
     return location.hash === "#master";
@@ -17,10 +18,10 @@ function updatePoint(x, y){
 }
     
 Meteor.startup(function() {
+    // ws setting
     console.log("Client startup");
-    
-    g_socket = new WebSocket("ws://192.168.11.10:3010");
-    //var socket = new WebSocket("ws://172.27.66.36:3000");
+    var wsAddr = "ws://" + location.hostname + ":3010";
+    g_socket = new WebSocket(wsAddr);
     g_socket.onopen = function(){
         console.log("Client onopen connect WebSocket-Node");
         var test = {
@@ -41,10 +42,40 @@ Meteor.startup(function() {
                     left: off.left + obj.val.x
                 });
             } else if(obj.key == "canvasStroke"){
-                console.log(obj.val.id + " " + obj.val.x + " " + obj.val.y);
+                var id = obj.val.id;
+                var x = obj.val.x;
+                var y = obj.val.y;
+                console.log("%s(%d, %d)", id, x, y);
+                if(g_canvasStrokes[id] == undefined || g_canvasStrokes[id].px == -1 || g_canvasStrokes[id].py == -1){
+                    g_canvasStrokes[id] = {
+                        px: x,
+                        py: y
+                    };
+                    return ;
+                } else{
+                    var px = g_canvasStrokes[id].px;
+                    var py = g_canvasStrokes[id].py;
+                    g_canvasStrokes[id] = {
+                        px: x,
+                        py: y 
+                    };
+                    if(x == -1 && y == -1){
+                        return ;
+                    }
+                    // draw
+                    var context = $("#" + id).get(0).getContext("2d");
+                    context.beginPath();             // パスのリセット
+                    context.lineWidth = 5;           // 線の太さ
+                    context.strokeStyle="#ff0000";   // 線の色
+                    context.moveTo(px, py);           // 開始位置
+                    context.lineTo(x, y);         // 次の位置
+                    context.stroke();    
+                    console.log("%s(%d, %d)->(%d, %d)", id, px, py, x, y);
+                }
             }
         }
     };
+    // ws setting
 
     Meteor.subscribe("watchers");
     Meteor.subscribe("masterSlideNo");
@@ -292,6 +323,9 @@ $(function(){
         this.height = 300;
 
         $(this).mousemove(function(e){
+            if(isMaster() == false){
+                return false;
+            }
             if(g_mode == "slide"){
                 return true;
             }
@@ -302,7 +336,6 @@ $(function(){
             var offsetY = e.clientY - off.top;
             var x = offsetX;
             var y = offsetY;
-            console.log(x + " " + y);
             if($.data(this, "mousedowning") && startX != null && startY != null){ 
                 var x = offsetX;
                 var y = offsetY;
