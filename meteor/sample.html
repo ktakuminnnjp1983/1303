@@ -9,10 +9,8 @@
             <h3>会議支援システム Ver.0.0.1</h3>
             {{> show_info}}
             {{> checkArea}}
-            <hr/>
             {{> displaySlide}}
             {{> slide}}
-            <hr/>
             {{> opinionsResult}}
             <hr/>
             {{> resetArea}}
@@ -38,19 +36,20 @@
 </template>
 
 <template name="slide">
-    スライド No. 
-    <input id="notextbox" type="text" value="0"></input>
+<div style="text-align:center;">
     <input id="prevButton" type="button" value="前へ"></input>
+    <input id="notextbox" type="text" value="0"></input>
     <input id="nextButton" type="button" value="次へ"></input>
+</div>
 </template>
 
 <template name="opinionsResult">
-     評価<br/>
+<div style="text-align:center;">
      {{#each opinions}}
          <input type="button" value="{{name}}" id="{{name}}Button"></input>
          {{count}}
-         <br/>
      {{/each}}
+ </div>
 </template>
 
 <template name="resetArea">
@@ -71,9 +70,11 @@
     <div id="point"></div>
 </div>
 {{#if slidesInfo.isMaster}}
-スライド<input type="radio" name="selectMode" value="slide" checked></input><br/>
-えんぴつ<input type="radio" name="selectMode" value="pen"></input><br/>
-けしごむ<input type="radio" name="selectMode" value="erase"></input><br/>
+<div style="text-align:center;">
+    <input type="radio" name="selectMode" value="slide" checked></input>スライド
+    <input type="radio" name="selectMode" value="pen"></input>          えんぴつ
+    <input type="radio" name="selectMode" value="erase"></input>        けしごむ
+</div>
 {{/if}}
 </template>
 

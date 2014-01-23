@@ -25,6 +25,11 @@ html, body{
     word-wrap: break-word;
 }
 
+#notextbox{
+    width: 50px;
+    text-align: center;
+}
+
 #commentsArea{
     width: 90%;
 }
