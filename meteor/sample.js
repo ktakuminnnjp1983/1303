@@ -11,7 +11,7 @@ SlideImgs = new Meteor.Collection("slideImgs");
 // 共通methods
 getMasterSlideNo = function(){
     var no = 0;
-    var doc = MasterSlideNo.findOne({name:"slideno"})
+    var doc = MasterSlideNo.findOne({name:"masterSlideNo"})
     if(doc){
         no = doc.no;
     }
@@ -20,7 +20,7 @@ getMasterSlideNo = function(){
 
 setMasterSlideNo = function(no){
     var id;
-    var doc = MasterSlideNo.findOne({name:"slideno"})
+    var doc = MasterSlideNo.findOne({name:"masterSlideNo"})
     if(doc){
         id = doc._id;
     }

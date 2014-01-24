@@ -3,12 +3,6 @@ console.log("Read client");
 var g_socket = null;
 var g_canvasStrokes = {};
 
-function showObj(obj){
-    for(var p in obj){
-        console.log(p + ":" + obj[p]);
-    }
-}
-
 function isMaster(){
     return location.hash === "#master";
 }
@@ -430,11 +424,7 @@ Template.commentsArea.events = {
 };
 Template.resetArea.events = {
     "click #resetButton": function(){
-        var slidenoid = MasterSlideNo.findOne({name:"slideno"})._id;
-        MasterSlideNo.update(
-            {_id: slidenoid},
-            {$set: {no: 0}}
-        );
+        setMasterSlideNo(0);
 
         Opinions.find({}).forEach(function(doc){
             Opinions.update(

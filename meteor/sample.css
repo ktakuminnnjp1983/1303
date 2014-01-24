@@ -54,13 +54,13 @@ html, body{
 }
 #flipsnap {
     width: 7000px; /* 320px(item width) * 3(item count) */
-    height:500px;
+    height: 500px;
 }
 .canvasWrapper {
     position: relative;
     float: left;
     width: 700px;
-    height:500px;
+    height: 500px;
 }
 .masterCanvas {
     background-color: transparent;
