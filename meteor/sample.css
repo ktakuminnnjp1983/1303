@@ -57,18 +57,32 @@ html, body{
     height:500px;
 }
 .canvasWrapper {
+    position: relative;
     float: left;
     width: 700px;
     height:500px;
 }
-.item {
+.masterCanvas {
     background-color: transparent;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    cursor: pointer;
+}
+.commentCanvas {
+    background-color: transparent;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    cursor: pointer;
+}
+.acomment {
     cursor: pointer;
 }
 #point {
     position: absolute;
-    width:10px;
-    height:10px;
-    background-color:blue;
+    width:15px;
+    height:15px;
+    background-color:yellow;
     display:none;
 }

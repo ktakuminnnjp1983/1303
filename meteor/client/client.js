@@ -40,7 +40,7 @@ function updateCanvas(target, dataURL){
         return ;
     }
    
-    // context.clearRect(0, 0, canvas.width, canvas.height);
+    context.clearRect(0, 0, canvas.width, canvas.height);
     var img = new Image();
     img.src = dataURL;
     img.onload = function(){
@@ -69,9 +69,45 @@ function updateSlideDataURL(target, dataURL){
     );
 }
 
-function getCanvasSnapShotURL(canvas){
+function getCanvasSnapShotURL(target){
+    if(!target){
+        alert("argError");
+    }
+
+    var canvas;
+    if(typeof target === "string"){
+        canvas = $("#"+target).eq(0).get(0);
+    } else if(typeof target === "object"){
+        canvas = target;
+    } else{
+        alert("argError2");
+    }
     var type = 'image/png';
     return canvas.toDataURL(type);
+}
+
+function getCurrentSlideNo(){
+    return g_flipsnap.currentPoint;
+}
+function setCurrentSlideNo(no){
+    g_flipsnap.moveToPoint(no);
+}
+
+function selectComment(commentID){
+    var targetDoc = Comments.findOne({no: commentID});
+    var _id = targetDoc._id;
+    var targetSlideNo = targetDoc.targetSlideNo;
+    var targetSlideSnapShot = targetDoc.targetSlideSnapShot;
+    console.log("jumpSlide with comment:%d targetSlideNo:%d", commentID, targetSlideNo);
+    console.log(targetSlideSnapShot);
+
+    setCurrentSlideNo(targetSlideNo);
+    if(isMaster()){
+        setMasterSlideNo(targetSlideNo);
+    }
+    var targetCanvas = $(".commentCanvas").eq(targetSlideNo).get(0);
+    // updateCanvas(targetCanvas, "");
+    updateCanvas(targetCanvas, targetSlideSnapShot);
 }
 
 Meteor.startup(function() {
@@ -133,6 +169,10 @@ Meteor.startup(function() {
                     context.lineTo(x, y);         // 次の位置
                     context.stroke();    
                 }
+            } else if(obj.key == "selectedComment"){
+                var commentID = Number(obj.val.commentID);
+                console.log("selectedComment is broadcasted:%d", commentID);
+                selectComment(commentID);
             }
         } else if(message.data.constructor === Blob){
             var context = $("canvas").eq(0).get(0).getContext("2d");
@@ -175,7 +215,7 @@ Meteor.startup(function() {
                 console.log("MasterSlideNo changed : %d", fields.no);
                 if(isMaster() || $("#syncCheck").prop("checked")){
                     $("#notextbox").val(fields.no);
-                    g_flipsnap.moveToPoint(fields.no);
+                    setCurrentSlideNo(fields.no);
                 }
             }
         }
@@ -231,6 +271,11 @@ Template.checkArea.helpers({
         return location.hash != "#master";
     }
 });
+Template.slide.helpers({
+    isMaster: function(){
+        return location.hash == "#master";
+    }
+});
 Template.opinionsResult.helpers({
     opinions: function(){
         return Opinions.find();
@@ -277,7 +322,7 @@ Template.checkArea.events = {
         if(checked){
             var no = getMasterSlideNo();
             $("#notextbox").val(no);
-            g_flipsnap.moveToPoint(no);
+            setCurrentSlideNo(no);
             $("#point").css("display", "block");
         } else{
             $("#point").css("display", "none");
@@ -293,7 +338,7 @@ Template.slide.events = {
         current = current - 1;
         $("#notextbox").val(current);
         $("#notextbox").val(current);
-        g_flipsnap.moveToPoint(current);
+        setCurrentSlideNo(current);
     },
     "click #nextButton": function(e, template){
         var current = Number($("#notextbox").val());
@@ -302,25 +347,30 @@ Template.slide.events = {
         }
         current = current + 1;
         $("#notextbox").val(current);
-        g_flipsnap.moveToPoint(current);
+        setCurrentSlideNo(current);
     },
     "click #pageClearButton": function(e, template){
-        var masterno = getMasterSlideNo();
-        console.log("clearPage %d", masterno);
-        updateSlideDataURL(masterno, "");
+        if(isMaster()){
+            var masterno = getCurrentSlideNo();
+            console.log("clearPage %d", masterno);
+            updateSlideDataURL(masterno, "");
+        }
+        // CommentCanvasをきれいにする
+        var targetCanvas = $(".commentCanvas").eq(getCurrentSlideNo()).get(0);
+        updateCanvas(targetCanvas, "");
     },
     "change #notextbox": function(e, template){
         var changed = template.find("#notextbox").value;
         if(isNaN(changed)){
             alert("入力が不正です");
-            template.find("#notextbox").value = g_flipsnap.currentPoint;
+            template.find("#notextbox").value = getCurrentSlideNo();
             return ;
         }
-        g_flipsnap.moveToPoint(changed);
+        setCurrentSlideNo(changed);
     }
 };
 Template.displaySlide.events = {
-    "mousemove .item": function(e, template){
+    "mousemove .masterCanvas": function(e, template){
         if(isMaster()){
             var off = $(e.target).offset();
             var offsetX = e.pageX - off.left; 
@@ -365,10 +415,16 @@ Template.commentsArea.events = {
         
         var numOfComments = Comments.find().count();
         comment = comment.replace(/\r?\n/g, "<br/>");
+        var commentCanvasID = "ccanvas_" + getCurrentSlideNo();
         Comments.insert({
-            no: numOfComments+1,
-            comment: comment
-        })
+            no: numOfComments,
+            comment: comment,
+            targetSlideNo: getCurrentSlideNo(),
+            targetSlideSnapShot: getCanvasSnapShotURL(commentCanvasID)  
+        });
+       
+        updateCanvas(commentCanvasID, "");
+       
         template.find("#commentsArea").value = "";
     }
 };
@@ -413,23 +469,19 @@ $(function(){
     
     g_flipsnap = Flipsnap("#flipsnap");
     g_flipsnap.element.addEventListener("fspointmove", function(a,i){
-        $("#notextbox").val(g_flipsnap.currentPoint);
+        $("#notextbox").val(getCurrentSlideNo());
         if(isMaster()){
-            setMasterSlideNo(g_flipsnap.currentPoint);
+            setMasterSlideNo(getCurrentSlideNo());
         }
     }, false);
 
-    $("canvas").each(function(el){
-        this.width = 700;
-        this.height = 500;
-        if(isMaster() == false){
-            return true;
-        }
-
+    $(".masterCanvas,.commentCanvas").each(function(el){
         $(this).mousemove(function(e){
             if(getSlideMode() == "slide"){
                 return true;
             }
+            e.stopPropagation();
+            
             var startX = $.data(this, "px");
             var startY = $.data(this, "py");
             var off = $(this).offset();
@@ -443,38 +495,54 @@ $(function(){
                 var context = this.getContext("2d");
                 context.beginPath();             // パスのリセット
                 context.lineWidth = getSlideMode() == "erase" ? 15 : 5;           // 線の太さ
-                context.strokeStyle="#ff0000";   // 線の色
+                context.strokeStyle= isMaster() ? "#ff0000" : "#0000ff";   // 線の色
                 context.moveTo(startX, startY);           // 開始位置
                 context.lineTo(x, y);         // 次の位置
                 context.stroke();    
                 
-                var obj ={
-                    key: "canvasStroke",
-                    val: {
-                        id: $(this).attr("id"),
-                        x: x,
-                        y: y,
-                        mode: getSlideMode() 
-                    }
-                };
-                g_socket.send(JSON.stringify(obj));
+                if(isMaster()){
+                    var obj ={
+                        key: "canvasStroke",
+                        val: {
+                            id: $(this).attr("id"),
+                            x: x,
+                            y: y,
+                            mode: getSlideMode() 
+                        }
+                    };
+                    g_socket.send(JSON.stringify(obj));
+                }
             }    
+          
             $.data(this, "px", x);
             $.data(this, "py", y);
-
-            e.stopPropagation();
         });
         $(this).mousedown(function(e){
-                var context = this.getContext("2d");
+            if(getSlideMode() == "slide"){
+                return true;
+            }
+            e.stopPropagation();
+            
+            var context = this.getContext("2d");
             if(getSlideMode() == "erase"){
                 context.globalCompositeOperation = "destination-out";
             } else{
                 context.globalCompositeOperation = "source-over";
             }
+            
             $.data(this, "mousedowning", true);
         });
         $(this).mouseup(function(e){
+            if(getSlideMode() == "slide"){
+                return true;
+            }
+            e.stopPropagation();
+            
             $.data(this, "mousedowning", false);
+            if(!isMaster()){
+                return true;
+            }
+            
             var obj ={
                 key: "canvasStroke",
                 val: {
@@ -492,23 +560,58 @@ $(function(){
             g_socket.send(JSON.stringify(obj));
         });
         $(this).mouseleave(function(e){
+            if(getSlideMode() == "slide"){
+                return true;
+            }
+            e.stopPropagation();
+            
             $.data(this, "px", null);
             $.data(this, "py", null);
             $.data(this, "mousedowning", false);
-            var obj ={
-                key: "canvasStroke",
-                val: {
-                    id: $(this).attr("id"),
-                    x: -1,
-                    y: -1
-                }
-            };
             this.getContext("2d").globalCompositeOperation = "source-over";
-            g_socket.send(JSON.stringify(obj));
+            if(isMaster()){
+                var obj ={
+                    key: "canvasStroke",
+                    val: {
+                        id: $(this).attr("id"),
+                        x: -1,
+                        y: -1
+                    }
+                };
+                g_socket.send(JSON.stringify(obj));
+            }
         });
     });
 
+    $(document).on("click", ".acomment", function(e){
+        var commentID = Number($(this).data("commentId"));
+        selectComment(commentID);
+        if(isMaster()){
+            // 選択されたコメントIDをブロードキャスト
+            var obj = {
+                key: "selectedComment",
+                val: {
+                    commentID: commentID
+                }
+            };
+            g_socket.send(JSON.stringify(obj));
+        }
+        return true;
+        // var targetDoc = Comments.findOne({no: commentID});
+        // var _id = targetDoc._id;
+        // var targetSlideNo = targetDoc.targetSlideNo;
+        // var targetSlideSnapShot = targetDoc.targetSlideSnapShot;
+        // console.log("jumpSlide with comment:%d targetSlideNo:%d", commentID, targetSlideNo);
+        // console.log(targetSlideSnapShot);
 
+        // setCurrentSlideNo(targetSlideNo);
+        // if(isMaster()){
+            // setMasterSlideNo(targetSlideNo);
+        // }
+        // var targetCanvas = $(".commentCanvas").eq(targetSlideNo).get(0);
+        // // updateCanvas(targetCanvas, "");
+        // updateCanvas(targetCanvas, targetSlideSnapShot);
+    });
     // $("#mainFrame").resizable({handles: "e"});
     
     // var successCallback = function(stream) {

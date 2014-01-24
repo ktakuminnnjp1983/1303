@@ -64,19 +64,23 @@
     <div id="flipsnap">
         {{#each slidesInfo.slides}}
         <div class="canvasWrapper" style="background-image:url(/imgs/{{img}});">
-            <canvas class="item" id="canvas_{{no}}"></canvas>
+            {{#if slidesInfo.isMaster}}
+                <canvas class="commentCanvas" id="ccanvas_{{no}}" width="700" height="500"></canvas>
+                <canvas class="masterCanvas" id="canvas_{{no}}" width="700" height="500"></canvas>
+            {{else}}
+                <canvas class="masterCanvas" id="canvas_{{no}}" width="700" height="500"></canvas>
+                <canvas class="commentCanvas" id="ccanvas_{{no}}" width="700" height="500"></canvas>
+            {{/if}}
         </div>
         {{/each}}
     </div>
     <div id="point"></div>
 </div>
-{{#if slidesInfo.isMaster}}
 <div style="text-align:center;">
     <input type="radio" name="selectMode" value="slide" checked></input>スライド
     <input type="radio" name="selectMode" value="pen"></input>          えんぴつ
     <input type="radio" name="selectMode" value="erase"></input>        けしごむ
 </div>
-{{/if}}
 </template>
 
 <template name="test">
@@ -93,7 +97,9 @@
     <textarea id="commentsArea" cols="40" wrap="soft"></textarea>
     <input id="commentSubmit" type="button" value="投稿"></input><br/>
     {{#each comments}}
-        {{no}}: {{{comment}}}<br/>
+        <div id="acomment_{{no}}" data-comment-id="{{no}}" class="acomment">
+            {{no}}: {{{comment}}} <!--htmlSpecialCharするか否か-->
+        </div>
     {{/each}}
 </template>
 
