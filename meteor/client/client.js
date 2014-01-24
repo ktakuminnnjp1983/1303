@@ -615,3 +615,6 @@ $(function(){
     // );
 });
 
+// memo
+//db.comments.find({targetSlideNo:{$gte:0,$lte:1}})
+//
