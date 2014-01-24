@@ -17,17 +17,30 @@ function getSlideMode(){
     return $("input[name=selectMode]:checked").val()
 }
 
-function updateCanvas(canvas, dataURL){
-    if(!canvas){
+function updateCanvas(target, dataURL){
+    console.log("updateCanvas: " + target);
+    if(!target){
         alert("argError");
     }
+    
+    var canvas;
+    if(typeof target === "string"){
+        canvas = $("#"+target).eq(0).get(0);
+    } else if(typeof target === "object"){
+        canvas = target;
+    } else{
+        alert("argError2");
+    }
+
     console.log("##### " + dataURL);
     var context = canvas.getContext("2d");
+    
     if(dataURL == ""){
         context.clearRect(0, 0, canvas.width, canvas.height);
         return ;
     }
-    context.clearRect(0, 0, canvas.width, canvas.height);
+   
+    // context.clearRect(0, 0, canvas.width, canvas.height);
     var img = new Image();
     img.src = dataURL;
     img.onload = function(){
@@ -86,16 +99,13 @@ Meteor.startup(function() {
                     }
                     // draw
                     var context = $("#" + id).get(0).getContext("2d");
-                    var lineWidth;
                     if(obj.val.mode == "pen"){
                         context.globalCompositeOperation = "source-over";
-                        lineWidth = 5;
                     } else{
                         context.globalCompositeOperation = "destination-out";
-                        lineWidth = 10;
                     }
                     context.beginPath();             // パスのリセット
-                    context.lineWidth = lineWidth;           // 線の太さ
+                    context.lineWidth = obj.val.mode == "erase" ? 15 : 5;
                     context.strokeStyle="#ff0000";   // 線の色
                     context.moveTo(px, py);           // 開始位置
                     context.lineTo(x, y);         // 次の位置
@@ -139,15 +149,6 @@ Meteor.startup(function() {
     // sync master slide no
     MasterSlideNo.find().observeChanges({
         changed: function(id, fields) {
-            if(fields.point !== undefined){
-                if($("#syncCheck").prop("checked")){
-                    var off = $("#viewport").offset();
-                    $("#point").css({
-                        top: off.top + fields.point.y,
-                        left: off.left + fields.point.x
-                    });
-                } 
-            }
             if(fields.no !== undefined){
                 console.log("MasterSlideNo changed : %d", fields.no);
                 if(isMaster() || $("#syncCheck").prop("checked")){
@@ -163,14 +164,15 @@ Meteor.startup(function() {
     });
 
     SlideImgs.find().observe({
-        changed: function(newDocument, oldDocument){
+        changed: function(newDocument){
             console.log("SlideImgs changed");
-            showObj(newDocument);
-            updateCanvas($("canvas").eq(newDocument.no).get(0), newDocument.dataURL);
+            if(newDocument.dataURL == "" ){
+                updateCanvas(newDocument.id, newDocument.dataURL);
+            }
         },
         added: function(newDocument){
             console.log("SlideImgs added");
-            updateCanvas($("canvas").eq(newDocument.no).get(0), newDocument.dataURL);
+            updateCanvas(newDocument.id, newDocument.dataURL);
         }
     });
 
@@ -280,6 +282,15 @@ Template.slide.events = {
         $("#notextbox").val(current);
         g_flipsnap.moveToPoint(current);
     },
+    "click #pageClearButton": function(e, template){
+        var masterno = getMasterSlideNo();
+        console.log("clearPage %d", masterno);
+        var _id = SlideImgs.findOne({no: masterno})._id;
+        SlideImgs.update(
+            {_id: _id},
+            {$set: {dataURL: ""}}
+        );
+    },
     "change #notextbox": function(e, template){
         var changed = template.find("#notextbox").value;
         if(isNaN(changed)){
@@ -289,7 +300,6 @@ Template.slide.events = {
         }
         g_flipsnap.moveToPoint(changed);
     }
-    
 };
 Template.displaySlide.events = {
     "mousemove .item": function(e, template){
@@ -366,6 +376,7 @@ Template.resetArea.events = {
         });
         
         SlideImgs.find({}).forEach(function(doc){
+            var id = doc.id;
             SlideImgs.update(
                 {_id: doc._id},
                 {$set: {dataURL: ""}}
@@ -398,7 +409,6 @@ $(function(){
         }
 
         $(this).mousemove(function(e){
-            var context = this.getContext("2d");
             if(getSlideMode() == "slide"){
                 return true;
             }
@@ -412,12 +422,24 @@ $(function(){
             if($.data(this, "mousedowning") && startX != null && startY != null){ 
                 var x = offsetX;
                 var y = offsetY;
+                var context = this.getContext("2d");
                 context.beginPath();             // パスのリセット
-                context.lineWidth = getSlideMode() == "erase" ? 10 : 5;           // 線の太さ
+                context.lineWidth = getSlideMode() == "erase" ? 15 : 5;           // 線の太さ
                 context.strokeStyle="#ff0000";   // 線の色
                 context.moveTo(startX, startY);           // 開始位置
                 context.lineTo(x, y);         // 次の位置
                 context.stroke();    
+                
+                var obj ={
+                    key: "canvasStroke",
+                    val: {
+                        id: $(this).attr("id"),
+                        x: x,
+                        y: y,
+                        mode: getSlideMode() 
+                    }
+                };
+                g_socket.send(JSON.stringify(obj));
             }    
             $.data(this, "px", x);
             $.data(this, "py", y);
@@ -425,7 +447,7 @@ $(function(){
             e.stopPropagation();
         });
         $(this).mousedown(function(e){
-            var context = this.getContext("2d");
+                var context = this.getContext("2d");
             if(getSlideMode() == "erase"){
                 context.globalCompositeOperation = "destination-out";
             } else{
@@ -434,9 +456,21 @@ $(function(){
             $.data(this, "mousedowning", true);
         });
         $(this).mouseup(function(e){
+            $.data(this, "mousedowning", false);
+            var obj ={
+                key: "canvasStroke",
+                val: {
+                    id: $(this).attr("id"),
+                    x: -1,
+                    y: -1
+                }
+            };
+            console.log(e.target.id);
             var id = e.target.id;
             var snapshotURL = getCanvasSnapShotURL(e.target);
             var _id = SlideImgs.findOne({id: id})._id;
+            console.log(_id);
+            console.log(snapshotURL);
             SlideImgs.update(
                 {_id: _id},
                 {
@@ -445,16 +479,27 @@ $(function(){
                     }
                 }
             );
-            $.data(this, "mousedowning", false);
+
             this.getContext("2d").globalCompositeOperation = "source-over";
+            g_socket.send(JSON.stringify(obj));
         });
         $(this).mouseleave(function(e){
             $.data(this, "px", null);
             $.data(this, "py", null);
             $.data(this, "mousedowning", false);
+            var obj ={
+                key: "canvasStroke",
+                val: {
+                    id: $(this).attr("id"),
+                    x: -1,
+                    y: -1
+                }
+            };
             this.getContext("2d").globalCompositeOperation = "source-over";
+            g_socket.send(JSON.stringify(obj));
         });
     });
+
 
     // $("#mainFrame").resizable({handles: "e"});
     
