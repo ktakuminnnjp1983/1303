@@ -47,6 +47,28 @@ function updateCanvas(target, dataURL){
         context.drawImage(img, 0, 0);
     }
 }
+
+function updateSlideDataURL(target, dataURL){
+    var _id;
+   
+    var key = {};
+    if(typeof target === "number"){
+        key.no = target;
+    } else if(typeof target === "string"){
+        key.id = target;
+    }
+    
+    _id = SlideImgs.findOne(key)._id;
+    SlideImgs.update(
+        {_id: _id},
+        {
+            $set: {
+                dataURL: dataURL
+            }
+        }
+    );
+}
+
 function getCanvasSnapShotURL(canvas){
     var type = 'image/png';
     return canvas.toDataURL(type);
@@ -285,11 +307,7 @@ Template.slide.events = {
     "click #pageClearButton": function(e, template){
         var masterno = getMasterSlideNo();
         console.log("clearPage %d", masterno);
-        var _id = SlideImgs.findOne({no: masterno})._id;
-        SlideImgs.update(
-            {_id: _id},
-            {$set: {dataURL: ""}}
-        );
+        updateSlideDataURL(masterno, "");
     },
     "change #notextbox": function(e, template){
         var changed = template.find("#notextbox").value;
@@ -468,17 +486,7 @@ $(function(){
             console.log(e.target.id);
             var id = e.target.id;
             var snapshotURL = getCanvasSnapShotURL(e.target);
-            var _id = SlideImgs.findOne({id: id})._id;
-            console.log(_id);
-            console.log(snapshotURL);
-            SlideImgs.update(
-                {_id: _id},
-                {
-                    $set: {
-                        dataURL: snapshotURL
-                    }
-                }
-            );
+            updateSlideDataURL(id, snapshotURL);
 
             this.getContext("2d").globalCompositeOperation = "source-over";
             g_socket.send(JSON.stringify(obj));
