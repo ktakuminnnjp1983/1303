@@ -597,20 +597,6 @@ $(function(){
             g_socket.send(JSON.stringify(obj));
         }
         return true;
-        // var targetDoc = Comments.findOne({no: commentID});
-        // var _id = targetDoc._id;
-        // var targetSlideNo = targetDoc.targetSlideNo;
-        // var targetSlideSnapShot = targetDoc.targetSlideSnapShot;
-        // console.log("jumpSlide with comment:%d targetSlideNo:%d", commentID, targetSlideNo);
-        // console.log(targetSlideSnapShot);
-
-        // setCurrentSlideNo(targetSlideNo);
-        // if(isMaster()){
-            // setMasterSlideNo(targetSlideNo);
-        // }
-        // var targetCanvas = $(".commentCanvas").eq(targetSlideNo).get(0);
-        // // updateCanvas(targetCanvas, "");
-        // updateCanvas(targetCanvas, targetSlideSnapShot);
     });
     // $("#mainFrame").resizable({handles: "e"});
     
