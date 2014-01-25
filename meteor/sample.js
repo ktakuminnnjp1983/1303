@@ -1,14 +1,12 @@
-console.log("Read common");
+console.log("##### Read common #####");
+// Server, Client共通
 
-// var を付けない、またFunctionObjectを使うことでclient, server両方から利用できるようになる
-// 正しい用法かは不明。
 Watchers = new Meteor.Collection("watchers");
 Opinions = new Meteor.Collection("opinions");
 MasterSlideNo = new Meteor.Collection("masterSlideNo");
 Comments = new Meteor.Collection("comments");
 SlideImgs = new Meteor.Collection("slideImgs");
 
-// 共通methods
 getMasterSlideNo = function(){
     var doc = MasterSlideNo.findOne();
     if(doc){
@@ -33,10 +31,3 @@ showObj = function(obj){
     }
 }
 
-if(Meteor.isServer){
-    console.log("common isServer");
-}
-
-if(Meteor.isClient){
-    console.log("common isClient");
-}

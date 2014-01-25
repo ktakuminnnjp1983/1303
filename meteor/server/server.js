@@ -1,4 +1,4 @@
-console.log("Read server");
+console.log("##### Read server #####");
 
 // websocket settings
 // http://d.hatena.ne.jp/nextliteracy/20131203/1386033577
@@ -30,7 +30,6 @@ wsServer.on("request", function(request){
     console.log(connections.length);
  
     connection.on("message", function(message){
-        console.log("########################");
         console.log(this === connection); // true
         console.log(message.type);
         if(message.type == "utf8"){
@@ -60,7 +59,7 @@ wsServer.on("request", function(request){
 
 
 Meteor.startup(function () {
-    console.log("Server startup");
+    console.log("##### Server startup ######");
     
     Meteor.publish("watchers", function(){
         return Watchers.find();
@@ -78,6 +77,57 @@ Meteor.startup(function () {
         return SlideImgs.find();
     });
 
+    setPermissionsFromclient();
+    
+    Meteor.setInterval(function(){
+        Watchers.remove({last_keepalive: {$lt: (new Date()).getTime() - 4000}});
+    }, 1000);
+
+    if(MasterSlideNo.find().count() == 0){
+        MasterSlideNo.insert({
+            no: 0
+        });
+    }
+    
+    if(Opinions.find().count() == 0){
+        var opinions = [
+            { name: "good", count: 0 },
+            { name: "bad", count: 0 }
+        ];
+        opinions.forEach(function(op){
+            Opinions.insert(op);
+        });
+    }
+
+    if(SlideImgs.find().count() == 0){
+        var imgs = [];
+        for(var i=0; i<10; ++i){
+            imgs.push({
+                no: i,
+                id: "canvas_" + i,
+                dataURL: ""
+            });
+        }
+        imgs.forEach(function(img){
+            SlideImgs.insert(img);
+        });
+    }
+
+    Meteor.onConnection(function(connection){
+        console.log("Connection id[%s]", connection.id);
+    });
+
+    // client から呼び出されるremote method
+    // 並列実行されることはない
+    // method内で this.unlock()するとブロックされなくなるらしい
+    Meteor.methods({
+        hello: function(msg){
+            console.log("Client->Server hello: " + msg);
+        }
+    });
+});
+
+function setPermissionsFromclient(){
     Watchers.allow({
         // データの挿入を許可するか
         insert: function(userId, doc) {
@@ -148,58 +198,5 @@ Meteor.startup(function () {
         },
         fetch: undefined
     });
+}
     
-    Watchers.remove({});
-    // MasterSlideNo.remove({});
-    // Opinions.remove({});
-    // Comments.remove({});
-    // SlideImgs.remove({});
-    
-    if(MasterSlideNo.find().count() == 0){
-        MasterSlideNo.insert({
-            no: 0
-        });
-    }
-    
-    if(Opinions.find().count() == 0){
-        var opinions = [
-            { name: "good", count: 0 },
-            { name: "bad", count: 0 }
-        ];
-        opinions.forEach(function(op){
-            Opinions.insert(op);
-        });
-    }
-
-    if(SlideImgs.find().count() == 0){
-        var imgs = [];
-        for(var i=0; i<10; ++i){
-            imgs.push({
-                no: i,
-                id: "canvas_" + i,
-                dataURL: ""
-            });
-        }
-        imgs.forEach(function(img){
-            SlideImgs.insert(img);
-        });
-    }
-
-    Meteor.onConnection(function(connection){
-        console.log("Connection id[%s]", connection.id);
-    });
-
-    Meteor.setInterval(function(){
-        Watchers.remove({last_keepalive: {$lt: (new Date()).getTime() - 4000}});
-    }, 1000);
-
-    // client から呼び出されるremote method
-    // 並列実行されることはない
-    // method内で this.unlock()するとブロックされなくなるらしい
-    Meteor.methods({
-        hello: function(msg){
-            console.log("Client->Server hello: " + msg);
-        }
-    });
-});
-

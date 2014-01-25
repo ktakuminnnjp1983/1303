@@ -65,11 +65,11 @@
         {{#each slidesInfo.slides}}
         <div class="canvasWrapper" style="background-image:url(/imgs/{{img}});">
             {{#if slidesInfo.isMaster}}
-                <canvas class="commentCanvas" id="ccanvas_{{no}}" width="700" height="500"></canvas>
-                <canvas class="masterCanvas" id="canvas_{{no}}" width="700" height="500"></canvas>
+                <canvas class="commentCanvas" id="ccanvas_{{no}}"></canvas>
+                <canvas class="masterCanvas" id="canvas_{{no}}"></canvas>
             {{else}}
-                <canvas class="masterCanvas" id="canvas_{{no}}" width="700" height="500"></canvas>
-                <canvas class="commentCanvas" id="ccanvas_{{no}}" width="700" height="500"></canvas>
+                <canvas class="masterCanvas" id="canvas_{{no}}"></canvas>
+                <canvas class="commentCanvas" id="ccanvas_{{no}}"></canvas>
             {{/if}}
         </div>
         {{/each}}
