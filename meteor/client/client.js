@@ -252,7 +252,7 @@ Template.test.helpers({
 });
 Template.show_info.helpers({
     info : function(){
-        console.log("DFSFSDFSDFSDF");
+        console.log("helper %s called", "show_info");
         var slideno = getMasterSlideNo();
         return {
             count: Watchers.find({}).count(),
@@ -262,26 +262,31 @@ Template.show_info.helpers({
 });
 Template.checkArea.helpers({
     check: function(){
+        console.log("helper %s called", "checkArea");
         return location.hash != "#master";
     }
 });
 Template.slide.helpers({
     isMaster: function(){
+        console.log("helper %s called", "slide");
         return location.hash == "#master";
     }
 });
 Template.opinionsResult.helpers({
     opinions: function(){
+        console.log("helper %s called", "opinionsResult");
         return Opinions.find();
     }
 });
 Template.resetArea.helpers({
     isMaster: function(){
+        console.log("helper %s called", "resetArea");
         return location.hash == "#master";
     }
 });
 Template.displaySlide.helpers({
     slidesInfo: function(){
+        console.log("helper %s called", "displaySlide");
         return {
             isMaster: location.hash == "#master",
             slides: [
@@ -301,6 +306,7 @@ Template.displaySlide.helpers({
 });
 Template.commentsArea.helpers({
     comments: function(){
+        console.log("helper %s called", "commentsArea");
         return Comments.find({}, {sort: {no: -1}});
     }
 });

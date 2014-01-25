@@ -157,8 +157,7 @@ Meteor.startup(function () {
     
     if(MasterSlideNo.find().count() == 0){
         MasterSlideNo.insert({
-            no: 0, 
-            name:"masterSlideNo"
+            no: 0
         });
     }
     

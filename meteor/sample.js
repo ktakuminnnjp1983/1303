@@ -10,21 +10,21 @@ SlideImgs = new Meteor.Collection("slideImgs");
 
 // 共通methods
 getMasterSlideNo = function(){
-    var no = 0;
-    var doc = MasterSlideNo.findOne({name:"masterSlideNo"})
+    var doc = MasterSlideNo.findOne();
     if(doc){
-        no = doc.no;
+        return doc.no;
+    } else{
+        return 0;
     }
-    return no;
 }
 
 setMasterSlideNo = function(no){
-    var id;
-    var doc = MasterSlideNo.findOne({name:"masterSlideNo"})
-    if(doc){
-        id = doc._id;
+    var doc = MasterSlideNo.findOne();
+    if(!doc){
+        return false;
     }
-    MasterSlideNo.update({_id:id}, {$set:{no:no}})
+    var _id = MasterSlideNo.findOne()._id
+    MasterSlideNo.update({_id: _id}, {$set: {no: no}})
 }
 
 showObj = function(obj){
