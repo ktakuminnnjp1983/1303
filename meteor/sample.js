@@ -25,6 +25,19 @@ setMasterSlideNo = function(no){
     MasterSlideNo.update({_id: _id}, {$set: {no: no}})
 }
 
+getFilterdCommentCursor = function(filter){
+    var cursor;
+    if(filter == "all"){
+        cursor =  Comments.find({}, {sort: {no: -1}});
+    } else{
+        targetPage = Number(filter);
+        cursor = Comments.find({targetSlideNo: targetPage}, {sort: {no: -1}});
+    }
+    
+    console.log("filteredCommentCursorCount:" + cursor.count());
+    return cursor;
+}
+
 showObj = function(obj){
     for(var prop in obj){
         console.log(prop + " " + obj[prop]);

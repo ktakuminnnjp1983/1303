@@ -11,7 +11,7 @@ Meteor.startup(function() {
     Meteor.subscribe("watchers");
     Meteor.subscribe("masterSlideNo");
     Meteor.subscribe("opinions");
-    Meteor.subscribe("comments");
+    Meteor.subscribe("comments", "all");
     Meteor.subscribe("slideImgs");
 
     Meteor.call("hello", "test");
@@ -54,6 +54,21 @@ $(function(){
             setMasterSlideNo(getCurrentSlideNo());
         }
     }, false);
+
+    for(var i=0; i<slidePages; ++i){
+        var $op = $("<option></option>");
+        $op.attr("value", i);
+        $op.text(i);
+        $("#commentFilter").append($op);
+    }
+    $("#commentFilter").change(function(e){
+        var filter = $(this).attr("value");
+        if(filter == "now"){
+            filter = getCurrentSlideNo();
+        }
+        Meteor.subscribe("comments", filter);
+        console.log("find()" + filter);
+    });
 
     $(".masterCanvas,.commentCanvas").each(function(el){
         this.width = slideWidth;
@@ -180,6 +195,12 @@ $(function(){
             g_socket.send(JSON.stringify(obj));
         }
         return true;
+    });
+    
+
+
+    $("#testbutton").click(function(){
+        console.log(Comments.find().count());
     });
     // $("#mainFrame").resizable({handles: "e"});
     

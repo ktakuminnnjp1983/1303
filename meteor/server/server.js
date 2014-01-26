@@ -70,8 +70,10 @@ Meteor.startup(function () {
     Meteor.publish("opinions", function(){
         return Opinions.find();
     });
-    Meteor.publish("comments", function(){
-        return Comments.find();
+    Meteor.publish("comments", function(filter){
+        var cursor = getFilterdCommentCursor(filter);
+        console.log("publish " + filter + " " + cursor.count());
+        return cursor;
     });
     Meteor.publish("slideImgs", function(){
         return SlideImgs.find();
