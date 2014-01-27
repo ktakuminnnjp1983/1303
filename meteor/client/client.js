@@ -1,26 +1,23 @@
-console.log("##### Read client ######");
-
-with(g_clientExports){
+console.log("##### Read client #####");
 
 var slideWidth = 700;
 var slideHeight = 500;
 var slidePages = 10;
 
 Meteor.startup(function() {
-    console.log("##### Client startup #####");
     Meteor.subscribe("watchers");
     Meteor.subscribe("masterSlideNo");
     Meteor.subscribe("opinions");
-    Meteor.subscribe("comments", "all");
+    Meteor.subscribe("comments");
     Meteor.subscribe("slideImgs");
 
     Meteor.call("hello", "test");
-    
     var user_id = Watchers.insert(
         {
             last_keepalive: (new Date()).getTime()
         }
     );
+    
     Session.set("user_id", user_id);
     Meteor.setInterval(function(){
         Watchers.update(
@@ -37,13 +34,17 @@ $(function(){
     } else{
         document.title = "一般"
     }
-    
-    $("#viewport, .canvasWrapper").css({
+
+    $("#viewport").css({
         width: slideWidth + "px",
         height: slideHeight + "px"
     });
     $("#flipsnap").css({
-        width: (slideWidth*slidePages) + "px",
+        width: (slideWidth * slidePages) + "px",
+        height: slideHeight + "px"
+    });
+    $(".canvasWrapper").css({
+        width: slideWidth + "px",
         height: slideHeight + "px"
     });
     
@@ -55,25 +56,9 @@ $(function(){
         }
     }, false);
 
-    for(var i=0; i<slidePages; ++i){
-        var $op = $("<option></option>");
-        $op.attr("value", i);
-        $op.text(i);
-        $("#commentFilter").append($op);
-    }
-    $("#commentFilter").change(function(e){
-        var filter = $(this).attr("value");
-        if(filter == "now"){
-            filter = getCurrentSlideNo();
-        }
-        Meteor.subscribe("comments", filter);
-        console.log("find()" + filter);
-    });
-
     $(".masterCanvas,.commentCanvas").each(function(el){
         this.width = slideWidth;
         this.height = slideHeight;
-
         $(this).mousemove(function(e){
             if(getSlideMode() == "slide"){
                 return true;
@@ -196,12 +181,6 @@ $(function(){
         }
         return true;
     });
-    
-
-
-    $("#testbutton").click(function(){
-        console.log(Comments.find().count());
-    });
     // $("#mainFrame").resizable({handles: "e"});
     
     // var successCallback = function(stream) {
@@ -218,8 +197,6 @@ $(function(){
         // failCallback
     // );
 });
-
-}
 
 // memo
 //db.comments.find({targetSlideNo:{$gte:0,$lte:1}})

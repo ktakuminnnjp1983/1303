@@ -1,41 +1,22 @@
 console.log("##### Read common #####");
-// Server, Client共通
 
-Watchers = new Meteor.Collection("watchers");
-Opinions = new Meteor.Collection("opinions");
-MasterSlideNo = new Meteor.Collection("masterSlideNo");
-Comments = new Meteor.Collection("comments");
-SlideImgs = new Meteor.Collection("slideImgs");
-
+// 共通methods
 getMasterSlideNo = function(){
-    var doc = MasterSlideNo.findOne();
+    var no = 0;
+    var doc = MasterSlideNo.findOne()
     if(doc){
-        return doc.no;
-    } else{
-        return 0;
+        no = doc.no;
     }
+    return no;
 }
 
 setMasterSlideNo = function(no){
+    var _id;
     var doc = MasterSlideNo.findOne();
-    if(!doc){
-        return false;
+    if(doc){
+        _id = doc._id;
+        MasterSlideNo.update({_id: _id}, {$set:{no: no}})
     }
-    var _id = MasterSlideNo.findOne()._id
-    MasterSlideNo.update({_id: _id}, {$set: {no: no}})
-}
-
-getFilterdCommentCursor = function(filter){
-    var cursor;
-    if(filter == "all"){
-        cursor =  Comments.find({}, {sort: {no: -1}});
-    } else{
-        targetPage = Number(filter);
-        cursor = Comments.find({targetSlideNo: targetPage}, {sort: {no: -1}});
-    }
-    
-    console.log("filteredCommentCursorCount:" + cursor.count());
-    return cursor;
 }
 
 showObj = function(obj){
@@ -44,3 +25,10 @@ showObj = function(obj){
     }
 }
 
+if(Meteor.isServer){
+    console.log("##### common isServer #####");
+}
+
+if(Meteor.isClient){
+    console.log("##### common isClient #####");
+}
