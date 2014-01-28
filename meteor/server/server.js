@@ -89,6 +89,10 @@ function setPermissions(){
 
 Meteor.startup(function () {
     console.log("Server startup");
+    // peer settings
+
+    var PeerServer = Meteor.require("peer").PeerServer;
+    PeerServer({port: peerPortnum, key: peerServerKey, debug: 3});
     
     Meteor.publish("watchers", function(){
         return Watchers.find();

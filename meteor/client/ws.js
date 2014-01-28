@@ -83,3 +83,77 @@ g_socket.onmessage = function(message){
     }
 };
 
+Meteor.startup(function(){
+
+var masterStream;
+(function(){
+    if(!isMaster()) return; 
+    function successCallback(stream){
+        masterStream = stream;
+    }
+    function erroCallback(error){
+        alert(error);
+    }
+    if(navigator.webkitGetUserMedia){
+        navigator.webkitGetUserMedia(
+            {video:false, audio:true}, 
+            successCallback,
+            erroCallback
+        );
+    } else if(navigator.mozGetUserMedia){
+        navigator.mozGetUserMedia(
+            {video:false, audio:true}, 
+            successCallback,
+            erroCallback
+        );
+    } else{
+        alert("try latest Firefox or Chrome");
+    }
+})();
+
+if(isMaster()){
+    var peer = new Peer("master", {
+        host:location.hostname, 
+        port:peerPortnum,
+        key:peerServerKey,
+        debug:3
+    });
+    peer.on("open", function(id){
+        peer.on("connection", function(connection){ // wait slave connection...
+            connection.on("open", function(arg){
+                connection.on("data", function(data){
+                    $("body").append("<div>slave->master " + data + "</div>");
+                });
+                if(masterStream){
+                    peer.call(connection.metadata, masterStream);
+                } 
+            });
+        });
+    });
+    peer.on("error", function(error){
+        alert(error);
+    });
+} else{
+    var peer = new Peer({
+        host:location.hostname, 
+        port:peerPortnum,
+        key:peerServerKey,
+        debug:3
+    });
+    peer.on("open", function(id){
+        con = peer.connect("master", {"serialization": "none", metadata: id});
+        con.on("open", function(arg){
+        });
+        peer.on("call", function(call){
+            call.answer(null); // slaveは返す必要無し
+            call.on("stream", function(stream){
+                $("#audio").attr("src", URL.createObjectURL(stream));
+            });
+        });
+    });
+    peer.on("error", function(error){
+        alert(error);
+    });
+}
+
+});

@@ -1,5 +1,8 @@
 console.log("##### Read common #####");
 
+peerPortnum = 9000;
+peerServerKey = "peerjs";
+
 // 共通methods
 getMasterSlideNo = function(){
     var no = 0;

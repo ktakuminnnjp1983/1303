@@ -127,6 +127,14 @@ $(function(){
         }
     }, false);
 
+    $("#muteCheck").change(function(e){
+        var audio = $("#audio").eq(0).get(0);
+        audio.muted = e.target.checked;
+    });
+    if(isMaster()){
+        $("#muteArea").css("display", "none");
+    }
+
     $(".masterCanvas,.commentCanvas").each(function(el){
         this.width = slideWidth;
         this.height = slideHeight;

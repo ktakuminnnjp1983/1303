@@ -9,6 +9,8 @@
             <h3>会議支援システム Ver.0.0.1</h3>
             {{> show_info}}
             {{> checkArea}}
+            <audio id="testaudio" autoplay="true" style="display:none;"></audio>
+            <div id="muteArea">ミュート<input type="checkbox" id="muteCheck" value="muted"></input></div>
             {{> displaySlide}}
             {{> slide}}
             {{> opinionsResult}}
@@ -29,6 +31,7 @@
         </div>
         <div style="clear: both;"></div>
         <input id="testbutton" type="button" value="test"></input>
+        <audio id="audio" autoplay="true"></audio><br/>
         <!-- <video id="chat" height="400" width="800" controls autoplay style="width:100%; height:100%;"></video> -->
     </div>
 </body>

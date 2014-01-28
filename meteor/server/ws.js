@@ -53,10 +53,5 @@ wsServer.on("request", function(request){
 });
 // websocket settings
 
-// peer settings
-
-var PeerServer = Meteor.require("peer").PeerServer;
-var pServer = new PeerServer({port: 9000, debug: 3});
-
 
 
