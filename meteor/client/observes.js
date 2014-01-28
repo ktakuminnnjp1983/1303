@@ -4,17 +4,16 @@ console.log("##### read observes #####");
 MasterSlideNo.find().observeChanges({
     changed: function(id, fields) {
         if(fields.no !== undefined){
-            console.log("MasterSlideNo changed : %d", fields.no);
+            // コメント入力中はスライド同期しない
+            if($("#commentsArea").val().length > 0){
+                return ;
+            }
             if(isMaster() || $("#syncCheck").prop("checked")){
                 $("#notextbox").val(fields.no);
                 setCurrentSlideNo(fields.no);
             }
         }
     }
-});
-// 上と同じようなこと
-Meteor.autorun(function(){
-    //console.log("autorun exec"+getMasterSlideNo());
 });
 
 SlideImgs.find().observe({
@@ -35,6 +34,10 @@ Comments.find().observe({
         var no = oldDocument.targetSlideNo;
         var targetCanvas = $(".commentCanvas").eq(no).get(0);
         updateCanvas(targetCanvas, "");
+        Session.set("numOfComments", Comments.find().count());
+    },
+    added: function(newDocument){
+        Session.set("numOfComments", Comments.find().count());
     }
 });
 

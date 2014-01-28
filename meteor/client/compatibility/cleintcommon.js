@@ -88,6 +88,7 @@ function getCurrentSlideNo(){
     return g_flipsnap.currentPoint;
 }
 function setCurrentSlideNo(no){
+    Session.set("currentSlideNo", no);
     g_flipsnap.moveToPoint(no);
 }
 

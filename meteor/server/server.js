@@ -99,8 +99,8 @@ Meteor.startup(function () {
     Meteor.publish("opinions", function(){
         return Opinions.find();
     });
-    Meteor.publish("comments", function(){
-        return Comments.find();
+    Meteor.publish("comments", function(filter){
+        return Comments.find({});
     });
     Meteor.publish("slideImgs", function(){
         return SlideImgs.find();
@@ -135,6 +135,20 @@ Meteor.startup(function () {
             SlideImgs.insert(img);
         });
     }
+
+    Comments.find().observe({
+        added: function(newDocument){
+            var count = Comments.find().count();
+            if(newDocument.no != -1){
+                return ;
+            }
+            console.log("comment added:" + count);
+            Comments.update(
+                {_id: newDocument._id},
+                {$set: {no: count-1}}
+            );
+        }
+    });
 
     Meteor.onConnection(function(connection){
         console.log("Connection id[%s]", connection.id);

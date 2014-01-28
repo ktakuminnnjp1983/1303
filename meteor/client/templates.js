@@ -64,12 +64,17 @@ Template.displaySlide.helpers({
         }
     }
 });
-Template.commentsArea.helpers({
-    comments: function(){
-        console.log("$$$ helper %s $$$", "commentsArea");
-        return Comments.find({}, {sort: {no: -1}});
-    }
-});
+// Template.commentsArea.helpers({
+    // comments: function(){
+        // var cursor = Comments.find({}, {sort: {no: -1}});
+        // console.log("$$$ helper %s %d$$$", "commentsArea", cursor.count());
+        // var count = cursor.count();
+        // return {
+            // cursor: cursor,
+            // count: count
+        // }
+    // }
+// });
 
 // イベント
 Template.checkArea.events = {
@@ -79,6 +84,7 @@ Template.checkArea.events = {
         }
 
         var checked = $("#syncCheck").prop("checked");
+        Session.set("syncMode", checked);
         if(checked){
             var no = getMasterSlideNo();
             $("#notextbox").val(no);
@@ -173,11 +179,10 @@ Template.commentsArea.events = {
             return ;
         }
         
-        var numOfComments = Comments.find().count();
         comment = comment.replace(/\r?\n/g, "<br/>");
         var commentCanvasID = "ccanvas_" + getCurrentSlideNo();
         Comments.insert({
-            no: numOfComments,
+            no: -1,
             comment: comment,
             targetSlideNo: getCurrentSlideNo(),
             targetSlideSnapShot: getCanvasSnapShotURL(commentCanvasID)  
@@ -190,7 +195,7 @@ Template.commentsArea.events = {
 };
 Template.resetArea.events = {
     "click #resetButton": function(){
-        var slidenoid = MasterSlideNo.findOne({name:"slideno"})._id;
+        var slidenoid = MasterSlideNo.findOne()._id;
         MasterSlideNo.update(
             {_id: slidenoid},
             {$set: {no: 0}}

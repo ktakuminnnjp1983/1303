@@ -42,6 +42,10 @@ html, body{
     border-collapse: collapse;
 }
 
+#commentsFilter{
+    width: 150px;
+}
+
 #employeeList th {
     background-color: lightgray;
 }

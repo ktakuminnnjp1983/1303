@@ -61,7 +61,9 @@ g_socket.onmessage = function(message){
         } else if(obj.key == "selectedComment"){
             var commentID = Number(obj.val.commentID);
             console.log("selectedComment is broadcasted:%d", commentID);
-            selectComment(commentID);
+            if(Session.get("syncMode")){
+                selectComment(commentID);
+            }
         }
     } else if(message.data.constructor === Blob){
         var context = $("canvas").eq(0).get(0).getContext("2d");
