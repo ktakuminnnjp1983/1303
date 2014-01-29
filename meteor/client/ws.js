@@ -118,6 +118,10 @@ if(isMaster()){
         key:peerServerKey,
         debug:3
     });
+    if(!peer){
+        alert("peerServerと接続できませんでした");
+        return;
+    }
     peer.on("open", function(id){
         peer.on("connection", function(connection){ // wait slave connection...
             connection.on("open", function(arg){
@@ -140,8 +144,16 @@ if(isMaster()){
         key:peerServerKey,
         debug:3
     });
+    if(!peer){
+        alert("peerServerと接続できませんでした");
+        return;
+    }
     peer.on("open", function(id){
         con = peer.connect("master", {"serialization": "none", metadata: id});
+        if(!con){
+            alert("masterと接続できませんでした");
+            return;
+        }
         con.on("open", function(arg){
         });
         peer.on("call", function(call){
