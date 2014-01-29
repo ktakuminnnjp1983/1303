@@ -4,6 +4,12 @@ var conarr = []; // for master
 var masterStream;
 var isMaster = location.hash == "#master";
 
+function sendMsgToSlaves(msg){
+    for(var i=0; i<conarr.length; ++i){
+        conarr[i].send(msg);
+    }
+}
+
 (function(){
     if(!isMaster) return; 
     function successCallback(stream){
@@ -45,13 +51,16 @@ $(function(){
     });
     
     if(isMaster){
-        $("#audiotrans").css("display", "block");
         var peer = new Peer("master", {
             host:location.hostname, 
             port:portnum,
             key:peerServerKey,
             debug:3
         });
+        if(!peer){
+            alert("peerServerと接続できませんでした");
+            return;
+        }
         peer.on("open", function(id){
             $("body").append("<div>peer opened id:" + id + "</div>");
             document.title = "発表者";
@@ -80,9 +89,17 @@ $(function(){
             key:peerServerKey,
             debug:3
         });
+        if(!peer){
+            alert("peerServerと接続できませんでした");
+            return;
+        }
         peer.on("open", function(id){
             $("body").append("<div>peer opened id:" + id + "</div>");
             con = peer.connect("master", {"serialization": "binary-utf8", metadata: id});
+            if(!con){
+                alert("masterと接続できませんでした");
+                return;
+            }
             con.on("open", function(arg){
                 $("body").append("<div>" + "slave <-> master Connection established" + "</div>");
                 con.on("data", function(data){
@@ -103,7 +120,8 @@ $(function(){
         });
     }
 
-    if(isMaster){
+    if(typeof webkitSpeechRecognition != "undefined" && isMaster){
+        $("#audiotrans").css("display", "block");
         var recognition = new webkitSpeechRecognition();
         recognition.lang = "ja-JP"
         recognition.continuous = true;
@@ -139,14 +157,8 @@ $(function(){
             console.log(event);
             for (var i = event.resultIndex; i<results.length; i++){
                 $("#recognizedText").text(results[i][0].transcript + " " + results[i][0].confidence);
+                sendMsgToSlaves(results[i][0].transcript + " " + results[i][0].confidence);
             };
-            for(var i=0; i<conarr.length; ++i){
-                for (var i = event.resultIndex; i<results.length; i++){
-                    for(var j=0; j<conarr.length; ++j){
-                        conarr[j].send(results[i][0].transcript + " " + results[i][0].confidence);
-                    }
-                };
-            }
         }
     }
 });
