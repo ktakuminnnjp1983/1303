@@ -4,7 +4,7 @@ peerPortnum = 9000;
 peerServerKey = "peerjs";
 
 // 共通methods
-getMasterSlideNo = function(){
+function getMasterSlideNo(){
     var no = 0;
     var doc = MasterSlideNo.findOne()
     if(doc){
@@ -13,7 +13,7 @@ getMasterSlideNo = function(){
     return no;
 }
 
-setMasterSlideNo = function(no){
+function setMasterSlideNo(no){
     var _id;
     var doc = MasterSlideNo.findOne();
     if(doc){
@@ -22,7 +22,7 @@ setMasterSlideNo = function(no){
     }
 }
 
-showObj = function(obj){
+function showObj(obj){
     for(var prop in obj){
         console.log(prop + " " + obj[prop]);
     }
