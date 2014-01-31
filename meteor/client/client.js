@@ -64,9 +64,9 @@ Meteor.startup(function() {
 $(function(){
     console.log("##### DOM Ready #####");
     if(location.hash == "#master"){
-        document.title = "発表者"
+        document.title = "発表者";
     } else{
-        document.title = "一般"
+        document.title = "一般";
     }
 
     $("#viewport").css({
@@ -88,7 +88,7 @@ $(function(){
 
     $("#commentSubmit").click(function(e){
         var comment = $("#commentsArea").val();
-        if(comment == ""){
+        if(comment === ""){
             return ;
         }
         
@@ -113,7 +113,7 @@ $(function(){
 
     $("#commentsArea").focusout(function(){
         // コメント入力後にスライドを同期
-        if(!isMaster() && getMasterSlideNo() != getCurrentSlideNo() && Session.get("syncMode") && $(this).val().length == 0){
+        if(!isMaster() && getMasterSlideNo() != getCurrentSlideNo() && Session.get("syncMode") && $(this).val().length === 0){
             setCurrentSlideNo(getMasterSlideNo());
         }
     });
@@ -311,14 +311,14 @@ $(function(){
         conn.send("testsjflkafjlkdajdlsjfja");
     });
     
-
     // $("#mainFrame").resizable({handles: "e"});
     
     // var successCallback = function(stream) {
         // var video = jQuery("#chat");
         // var videoStream = window.webkitURL ? window.webkitURL.createObjectURL(stream) : stream;
         // video.attr("src", videoStream);
-    // };
+
+// };
     // var failCallback = function(error) {
         // alert("error... code : " + error.code);
     // };
