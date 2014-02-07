@@ -2,7 +2,6 @@ console.log("##### Read common #####");
 
 peerPortnum = 9000;
 peerServerKey = "peerjs";
-
 // 共通methods
 function getMasterSlideNo(){
     var no = 0;
@@ -22,11 +21,25 @@ function setMasterSlideNo(no){
     }
 }
 
-function showObj(obj){
-    for(var prop in obj){
-        console.log(prop + " " + obj[prop]);
+function showOb(obj, recursive){
+    for(var p in obj){
+        if(typeof obj[p] != "function"){
+            if(recursive && typeof obj[p] == "object"){
+                console.log("## " +  p + "  object ##");
+                showInfo(obj[p]);
+                console.log("## ##");
+            } else{
+                console.log(p + " " + obj[p]);
+            }
+        }
     }
 }
+
+// function showObj(obj){
+    // for(var prop in obj){
+        // console.log(prop + " " + obj[prop]);
+    // }
+// }
 
 if(Meteor.isServer){
     console.log("##### common isServer #####");
