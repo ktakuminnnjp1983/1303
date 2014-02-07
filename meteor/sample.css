@@ -19,6 +19,7 @@ html, body{
 
 #commentsFrame{
     width: 200px;
+    height: 100%;
     overflow: auto;
     float: right;
     margin: 5px;
