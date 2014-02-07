@@ -30,6 +30,7 @@ function updateCanvas(target, dataURL){
         alert("argError2");
     }
 
+    console.log(canvas);
     console.log("##### " + dataURL);
     var context = canvas.getContext("2d");
     

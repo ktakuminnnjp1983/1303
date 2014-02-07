@@ -2,8 +2,9 @@ console.log("##### Read common #####");
 
 peerPortnum = 9000;
 peerServerKey = "peerjs";
+
 // 共通methods
-function getMasterSlideNo(){
+getMasterSlideNo = function(){
     var no = 0;
     var doc = MasterSlideNo.findOne()
     if(doc){
@@ -12,7 +13,7 @@ function getMasterSlideNo(){
     return no;
 }
 
-function setMasterSlideNo(no){
+setMasterSlideNo = function(no){
     var _id;
     var doc = MasterSlideNo.findOne();
     if(doc){
@@ -21,25 +22,11 @@ function setMasterSlideNo(no){
     }
 }
 
-function showOb(obj, recursive){
-    for(var p in obj){
-        if(typeof obj[p] != "function"){
-            if(recursive && typeof obj[p] == "object"){
-                console.log("## " +  p + "  object ##");
-                showInfo(obj[p]);
-                console.log("## ##");
-            } else{
-                console.log(p + " " + obj[p]);
-            }
-        }
+showObj = function(obj){
+    for(var prop in obj){
+        console.log(prop + " " + obj[prop]);
     }
 }
-
-// function showObj(obj){
-    // for(var prop in obj){
-        // console.log(prop + " " + obj[prop]);
-    // }
-// }
 
 if(Meteor.isServer){
     console.log("##### common isServer #####");
@@ -48,4 +35,3 @@ if(Meteor.isServer){
 if(Meteor.isClient){
     console.log("##### common isClient #####");
 }
-
