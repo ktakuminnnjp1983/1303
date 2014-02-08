@@ -111,6 +111,13 @@ var masterStream;
     }
 })();
 
+var connections = [];
+function sendMsgToSlaves(msg){
+    for(var i=0; i<connections.length; ++i){
+        conarr[i].send(msg);
+    }
+}
+
 if(isMaster()){
     var peer = new Peer("master", {
         host:location.hostname, 
@@ -125,8 +132,9 @@ if(isMaster()){
     peer.on("open", function(id){
         peer.on("connection", function(connection){ // wait slave connection...
             connection.on("open", function(arg){
+                connections.push(connection);
                 connection.on("data", function(data){
-                    $("body").append("<div>slave->master " + data + "</div>");
+                    // $("body").append("<div>slave->master " + data + "</div>");
                 });
                 if(masterStream){
                     peer.call(connection.metadata, masterStream);
@@ -155,6 +163,9 @@ if(isMaster()){
             return;
         }
         con.on("open", function(arg){
+            con.on("data", function(data){
+                // $("body").append("<div>master->slave " + data + "</div>");
+            });
         });
         peer.on("call", function(call){
             call.answer(null); // slaveは返す必要無し

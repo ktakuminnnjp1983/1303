@@ -81,6 +81,11 @@ $(function(){
         width: slideWidth + "px",
         height: slideHeight + "px"
     });
+    $("canvas").each(function(){
+        this.width = slideWidth;
+        this.height = slideHeight;
+    });
+
 
     $("#commentsFilter").change(function(e){
         Session.set("commentsFilter", $(this).attr("value"));
@@ -136,10 +141,7 @@ $(function(){
     }
 
     $(".masterCanvas,.commentCanvas").each(function(el){
-        this.width = slideWidth;
-        this.height = slideHeight;
         $(this).on("mousemove touchmove", function(e){
-        console.log("move");
             if(getSlideMode() == "slide"){
                 return true;
             }
@@ -182,7 +184,6 @@ $(function(){
             $.data(this, "py", offsetY);
         });
         $(this).on("mousedown touchstart", function(e){
-        console.log("start");
             if(getSlideMode() == "slide"){
                 return true;
             }
@@ -198,8 +199,6 @@ $(function(){
             $.data(this, "mousedowning", true);
         });
         $(this).on("mouseup touchend", function(e){
-
-        console.log("end");
             if(getSlideMode() == "slide"){
                 return true;
             }
@@ -267,72 +266,8 @@ $(function(){
         return true;
     });
 
-    //peer
-    var conn; 
-    if(isMaster()){
-        var peer = new Peer("masterid", {
-            host: location.hostname,
-            port: peerPortnum,
-            key: peerServerKey,
-            debug:3
-        });
-        conn = peer.connect("slaveid", {label:"chat", "serialization": "none", reliable:true});
-        peer.on("open", function(id){
-            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$ connect %s", id);
-        });
-        
-        peer.on("connection", function(){
-            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$ connect");
-        });
-        conn.on("data", function(data){
-            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$ %s", data);
-            console.log(this);
-            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$ open");
-            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$ send");
-        });
-    } else{
-        var peer = new Peer("slaveid", {
-            host: location.hostname,
-            port: peerPortnum,
-            key: peerServerKey,
-            debug:3
-        });
-        conn = peer.connect("masterid", {label:"chat","serialization": "none", reliable:true});
-        peer.on("open", function(id){
-            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$ connect %s", id);
-        });
-        
-        peer.on("connection", function(){
-            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$ connect");
-        });
-        conn.on("data", function(data){
-            console.log(this);
-            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$ %s", data);
-            conn.send("hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
-            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$ send");
-        });
-    }
-    $("#testbutton").click(function(){
-        console.log(conn);
-        conn.send("testsjflkafjlkdajdlsjfja");
-    });
-    
     // $("#mainFrame").resizable({handles: "e"});
     
-    // var successCallback = function(stream) {
-        // var video = jQuery("#chat");
-        // var videoStream = window.webkitURL ? window.webkitURL.createObjectURL(stream) : stream;
-        // video.attr("src", videoStream);
-
-// };
-    // var failCallback = function(error) {
-        // alert("error... code : " + error.code);
-    // };
-    // navigator.webkitGetUserMedia(
-        // {video: false, audio: true},
-        // successCallback, 
-        // failCallback
-    // );
 });
 
 // memo
