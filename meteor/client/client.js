@@ -138,48 +138,51 @@ $(function(){
     $(".masterCanvas,.commentCanvas").each(function(el){
         this.width = slideWidth;
         this.height = slideHeight;
-        $(this).mousemove(function(e){
+        $(this).on("mousemove touchmove", function(e){
+        console.log("move");
             if(getSlideMode() == "slide"){
                 return true;
             }
             e.stopPropagation();
-            
+            e.preventDefault();
+
+            var pageX = e.originalEvent.touches ? e.originalEvent.touches[0].pageX : e.pageX;
+            var pageY = e.originalEvent.touches ? e.originalEvent.touches[0].pageY : e.pageY;
+
             var startX = $.data(this, "px");
             var startY = $.data(this, "py");
             var off = $(this).offset();
-            var offsetX = e.pageX - off.left; 
-            var offsetY = e.pageY - off.top;
-            var x = offsetX;
-            var y = offsetY;
+            var offsetX = pageX - off.left; 
+            var offsetY = pageY - off.top;
             if($.data(this, "mousedowning") && startX != null && startY != null){ 
-                var x = offsetX;
-                var y = offsetY;
                 var context = this.getContext("2d");
                 context.beginPath();             // パスのリセット
                 context.lineWidth = getSlideMode() == "erase" ? 15 : 5;           // 線の太さ
                 context.strokeStyle= isMaster() ? "#ff0000" : "#0000ff";   // 線の色
                 context.moveTo(startX, startY);           // 開始位置
-                context.lineTo(x, y);         // 次の位置
+                context.lineTo(offsetX, offsetY);         // 次の位置
                 context.stroke();    
-                
+                // console.log("%d %d %d %d", startX, startY, offsetX, offsetY);
+
                 if(isMaster()){
                     var obj ={
                         key: "canvasStroke",
                         val: {
                             id: $(this).attr("id"),
-                            x: x,
-                            y: y,
+                            x: offsetX,
+                            y: offsetY,
                             mode: getSlideMode() 
                         }
                     };
                     g_socket.send(JSON.stringify(obj));
                 }
             }    
-          
-            $.data(this, "px", x);
-            $.data(this, "py", y);
+
+            $.data(this, "px", offsetX);
+            $.data(this, "py", offsetY);
         });
-        $(this).mousedown(function(e){
+        $(this).on("mousedown touchstart", function(e){
+        console.log("start");
             if(getSlideMode() == "slide"){
                 return true;
             }
@@ -194,17 +197,20 @@ $(function(){
             
             $.data(this, "mousedowning", true);
         });
-        $(this).mouseup(function(e){
+        $(this).on("mouseup touchend", function(e){
+
+        console.log("end");
             if(getSlideMode() == "slide"){
                 return true;
             }
             e.stopPropagation();
             
             $.data(this, "mousedowning", false);
+            $.data(this, "px", null);
+            $.data(this, "py", null);
             if(!isMaster()){
                 return true;
             }
-            
             var obj ={
                 key: "canvasStroke",
                 val: {
@@ -221,7 +227,7 @@ $(function(){
             this.getContext("2d").globalCompositeOperation = "source-over";
             g_socket.send(JSON.stringify(obj));
         });
-        $(this).mouseleave(function(e){
+        $(this).on("mouseleave", function(e){
             if(getSlideMode() == "slide"){
                 return true;
             }
@@ -265,9 +271,9 @@ $(function(){
     var conn; 
     if(isMaster()){
         var peer = new Peer("masterid", {
-            host: "172.27.66.36",
-            port: 9000,
-            key: "peerjs",
+            host: location.hostname,
+            port: peerPortnum,
+            key: peerServerKey,
             debug:3
         });
         conn = peer.connect("slaveid", {label:"chat", "serialization": "none", reliable:true});
@@ -286,9 +292,9 @@ $(function(){
         });
     } else{
         var peer = new Peer("slaveid", {
-            host: "172.27.66.36",
-            port: 9000,
-            key: "peerjs",
+            host: location.hostname,
+            port: peerPortnum,
+            key: peerServerKey,
             debug:3
         });
         conn = peer.connect("masterid", {label:"chat","serialization": "none", reliable:true});

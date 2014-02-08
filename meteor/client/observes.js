@@ -3,6 +3,7 @@ console.log("##### read observes #####");
 // sync master slide no
 MasterSlideNo.find().observeChanges({
     changed: function(id, fields) {
+        console.log("MasterSlideNo changed");
         if(fields.no !== undefined){
             // コメント入力中はスライド同期しない
             if($("#commentsArea").val().length > 0){
