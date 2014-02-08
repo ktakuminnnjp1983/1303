@@ -171,6 +171,7 @@ if(isMaster()){
             call.answer(null); // slaveは返す必要無し
             call.on("stream", function(stream){
                 $("#audio").attr("src", URL.createObjectURL(stream));
+                // $("#testvideo").attr("src", URL.createObjectURL(stream));
             });
         });
     });
