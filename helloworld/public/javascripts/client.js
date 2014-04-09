@@ -1,5 +1,4 @@
-var socket = new WebSocket("ws://192.168.11.10:3000");
-//var socket = new WebSocket("ws://172.27.66.36:3000");
+var socket = new WebSocket("ws://" + location.host);
 
 socket.onopen = function(){
     console.log("Client onopen");
