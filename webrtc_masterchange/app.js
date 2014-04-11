@@ -94,6 +94,7 @@ io.sockets.on('connection', function(socket){
     socket.my_id = id;
     connections[id] = socket;
     showConnections(connections);
+    socket.emit("clientConnect", id);
     
     socket.on('getmaster', function(){
         console.log("%s try to get master. currentMaster[%s]", socket.my_id, masterID);
@@ -106,6 +107,10 @@ io.sockets.on('connection', function(socket){
     });
     socket.on("releasemaster", function(){
         console.log("%s try to releasemaster", socket.my_id);
+        if(masterID != socket.my_id){
+            console.log("!!!!!!!!! internal error !!!!!!!!!");
+            return ;
+        }
         changeMasterID(null, socket);
         listeners.clear();
     });
@@ -136,4 +141,9 @@ io.sockets.on('connection', function(socket){
     });
 });
 
+// for peer server
+var portnum = 9000;
+var peerServerKey = "peerjs";
+var PeerServer = require('peer').PeerServer;
+var server = new PeerServer({ port: portnum, key: peerServerKey, debug:3 });
 
