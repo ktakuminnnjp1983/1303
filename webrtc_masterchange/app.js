@@ -35,17 +35,17 @@ var io = require("socket.io").listen(httpServer);
 
 httpServer.listen(app.get("port"));
 
-function showConnections(hash, sep){
+function showKeys(hash, sep){
     var num = 0;
     if(!sep){
         sep = "######";
     }
     console.log(sep);
-    for(var id in hash){
+    for(var key in hash){
         ++num;
-        console.log("id:%s", hash[id].my_id);
+        console.log("key:%s", hash[id].my_id);
     }
-    console.log("num of connections [%d]", num);
+    console.log("num of keys [%d]", num);
     console.log(sep);
 }
 
@@ -83,7 +83,7 @@ function Listeners(){
         return Object.keys(this._listeners);
     }
     this.showListeners = function(){
-        showConnections(this._listeners, "@@@@@");
+        showKeys(this._listeners, "@@@@@");
     }
 }
 var listeners = new Listeners();
@@ -93,7 +93,7 @@ io.sockets.on('connection', function(socket){
     console.log("new connection [%s]", id);
     socket.my_id = id;
     connections[id] = socket;
-    showConnections(connections);
+    showKeys(connections);
     socket.emit("clientConnect", id);
     
     socket.on('getmaster', function(){
@@ -137,7 +137,7 @@ io.sockets.on('connection', function(socket){
             changeMasterID(null, socket);
             listeners.clear();
         }
-        showConnections(connections);
+        showKeys(connections);
     });
 });
 
