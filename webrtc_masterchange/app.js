@@ -71,14 +71,19 @@ Listeners.prototype = {
         this.showListeners();
     },
     removeListener: function(id){
-        delete this._listeners[id];
-        if(masterID){
-            connections[masterID].emit("listenersChanged", this.getIDs());
+        if(this._listeners[id]){
+            delete this._listeners[id];
+            if(masterID){
+                connections[masterID].emit("listenersChanged", this.getIDs());
+            }
+            this.showListeners();
         }
-        this.showListeners();
     },
     clear: function(){
         this._listeners = {};
+        if(masterID){
+            connections[masterID].emit("listenersChanged", []);
+        }
     },
     getIDs: function(){
         return Object.keys(this._listeners);
@@ -114,15 +119,15 @@ io.sockets.on('connection', function(socket){
             return ;
         }
         changeMasterID(null, socket);
-        listeners.clear();
+        // listeners.clear();
     });
     socket.on("getlisten", function(){
         console.log("%s start to listen", socket.my_id);
-        if(!masterID){
-            console.log("master not exists");
-            socket.emit("getlisten", false);
-            return ;
-        }
+        // if(!masterID){
+            // console.log("master not exists");
+            // socket.emit("getlisten", false);
+            // return ;
+        // }
         socket.emit("getlisten", true);
         listeners.addListener(socket.my_id, socket);
     });
@@ -137,7 +142,7 @@ io.sockets.on('connection', function(socket){
         delete connections[socket.my_id];
         if(masterID === socket.my_id){
             changeMasterID(null, socket);
-            listeners.clear();
+            // listeners.clear();
         }
         showKeys(connections);
     });
