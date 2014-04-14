@@ -138,8 +138,8 @@ io.sockets.on('connection', function(socket){
     
     socket.on('disconnect', function(){
         console.log("connection close [%s]", socket.my_id);
-        listeners.removeListener(socket.my_id);
         delete connections[socket.my_id];
+        listeners.removeListener(socket.my_id);
         if(masterID === socket.my_id){
             changeMasterID(null, socket);
             // listeners.clear();
