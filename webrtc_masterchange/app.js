@@ -43,7 +43,7 @@ function showKeys(hash, sep){
     console.log(sep);
     for(var key in hash){
         ++num;
-        console.log("key:%s", hash[id].my_id);
+        console.log("key:%s", hash[key].my_id);
     }
     console.log("num of keys [%d]", num);
     console.log(sep);
@@ -61,31 +61,33 @@ var connections = {};
 
 function Listeners(){
     this._listeners = {};
-
-    this.addListener = function(id, socket){
+}
+Listeners.prototype = {
+    addListener: function(id, socket){
         this._listeners[id] = socket;
         if(masterID){
             connections[masterID].emit("listenersChanged", this.getIDs());
         }
         this.showListeners();
-    }
-    this.removeListener = function(id){
+    },
+    removeListener: function(id){
         delete this._listeners[id];
         if(masterID){
             connections[masterID].emit("listenersChanged", this.getIDs());
         }
         this.showListeners();
-    }
-    this.clear = function(){
+    },
+    clear: function(){
         this._listeners = {};
-    }
-    this.getIDs = function(){
+    },
+    getIDs: function(){
         return Object.keys(this._listeners);
-    }
-    this.showListeners = function(){
+    },
+    showListeners: function(){
         showKeys(this._listeners, "@@@@@");
     }
-}
+};
+
 var listeners = new Listeners();
 
 io.sockets.on('connection', function(socket){
@@ -100,9 +102,9 @@ io.sockets.on('connection', function(socket){
         console.log("%s try to get master. currentMaster[%s]", socket.my_id, masterID);
         if(!masterID){
             changeMasterID(socket.my_id, socket);
-            socket.emit("getmaster", true);
+            socket.emit("getmaster", {result: true, listeners: listeners.getIDs()});
         } else{
-            socket.emit("getmaster", false);
+            socket.emit("getmaster", {result: false});
         }
     });
     socket.on("releasemaster", function(){
