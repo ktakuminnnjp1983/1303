@@ -11,6 +11,7 @@ g_socket.onopen = function(){
 
 var context = new AudioContext();
 g_socket.onmessage = function(message){
+    console.log(message);
     if(message.data.constructor === String){
         var obj = JSON.parse(message.data);
     } else if(message.data.constructor === Blob){
@@ -44,7 +45,7 @@ var g_stream;
     if(!g_isMaster){
         return ;
     }
-    
+
     function successCallback(stream){
         var context = new AudioContext();
         var source = context.createMediaStreamSource(stream);
@@ -83,4 +84,9 @@ $(function(){
     if(g_isMaster){
     } else{
     }
+    
+    $("#soundDownload").click(function(){
+        g_socket.send("getFile");
+    });
+    
 });

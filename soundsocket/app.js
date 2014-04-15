@@ -13,6 +13,8 @@ var WebSocketServer = require('websocket').server;
 
 var app = express();
 
+var fs = require("fs");
+
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
@@ -55,6 +57,7 @@ function showConnections(){
 
 var puid = new Puid();
 var connections = {}; 
+
 wsServer.on("request", function(request){
     var id = puid.generate();
     console.log("connect:" + id);
@@ -69,9 +72,17 @@ wsServer.on("request", function(request){
         console.log(message.type);
         if(message.type == "utf8"){
             console.log(message.utf8Data);
+            if(message.utf8Data == "getFile"){
+                fs.readFile("./test.txt", "binary", function(err, data){
+                    console.log(data);
+                    console.log(typeof data);
+                    connection.send(data);
+                });
+            }
         } else if(message.type == "binary"){
             console.log(message.binaryData.constructor);
             console.log(message.binaryData);
+            fs.appendFile("./test.txt", message.binaryData, "binary", {flag: "a"});
             for(var prop in connections){
                 if(connection !== connections[prop]){
                     connections[prop].send(message.binaryData); // Buffer node.js

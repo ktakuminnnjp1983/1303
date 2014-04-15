@@ -43,108 +43,130 @@ function showKeys(hash, sep){
     console.log(sep);
     for(var key in hash){
         ++num;
-        console.log("key:%s", hash[key].my_id);
+        console.log("key:%s", key);
     }
     console.log("num of keys [%d]", num);
     console.log(sep);
 }
 
-function changeMasterID(id, socket){
-    masterID = id;
-    socket.broadcast.emit("masterChanged", id);
-}
-
-var puid = new Puid();
-var masterID = null;
-
-var connections = {};
-
-function Listeners(){
+function ConnectionMgr(){
+    this._connections = {};
     this._listeners = {};
+    this._masters = {};
+    this._masterCount = 0;
 }
-Listeners.prototype = {
+ConnectionMgr.prototype = {
+    addConnection: function(id, socket){
+        console.log("new connection [%s]", id);
+        this._connections[id] = socket;
+        this.showConnections();
+    },
+    removeConnection: function(id){
+        if(!this._connections[id]){
+            console.log("!!!!!!!!! internal error !!!!!!!!!");
+            return ;
+        }
+        console.log("remove connection [%s]", id);
+        this.removeMaster(id);
+        this.removeListener(id);
+        delete this._connections[id];
+        this.showConnections();
+    },
+    addMaster: function(id, socket){
+        if(this._masterCount >= 3){
+            socket.emit("getmaster", {result: false, listeners: []});
+            socket.broadcast.emit("wantMaster", socket.my_id);
+            return ;
+        }
+        ++this._masterCount;
+        console.log("new master [%s], num[%d]", id, this._masterCount);
+        this._masters[id] = socket;
+        socket.emit("getmaster", {result: true, listeners: this.getListenerIDs()});
+        this.showMasters();
+    },
+    removeMaster: function(id){
+        if(!this._masters[id]){
+            console.log("!!!!!!!!! internal error !!!!!!!!!");
+            return ;
+        }
+        --this._masterCount;
+        console.log("remove master [%s] num[%d]", id, this._masterCount);
+        delete this._masters[id];
+        this.showMasters();
+    },
     addListener: function(id, socket){
+        console.log("new listener [%s]", id);
         this._listeners[id] = socket;
-        if(masterID){
-            connections[masterID].emit("listenersChanged", this.getIDs());
+        for(var id in this._masters){
+            this._masters[id].emit("listenersChanged", this.getListenerIDs());
         }
         this.showListeners();
     },
     removeListener: function(id){
-        if(this._listeners[id]){
-            delete this._listeners[id];
-            if(masterID){
-                connections[masterID].emit("listenersChanged", this.getIDs());
-            }
-            this.showListeners();
-        }
-    },
-    clear: function(){
-        this._listeners = {};
-        if(masterID){
-            connections[masterID].emit("listenersChanged", []);
-        }
-    },
-    getIDs: function(){
-        return Object.keys(this._listeners);
-    },
-    showListeners: function(){
-        showKeys(this._listeners, "@@@@@");
-    }
-};
-
-var listeners = new Listeners();
-
-io.sockets.on('connection', function(socket){
-    var id = puid.generate();
-    console.log("new connection [%s]", id);
-    socket.my_id = id;
-    connections[id] = socket;
-    showKeys(connections);
-    socket.emit("clientConnect", id);
-    
-    socket.on('getmaster', function(){
-        console.log("%s try to get master. currentMaster[%s]", socket.my_id, masterID);
-        if(!masterID){
-            changeMasterID(socket.my_id, socket);
-            socket.emit("getmaster", {result: true, listeners: listeners.getIDs()});
-        } else{
-            socket.emit("getmaster", {result: false});
-        }
-    });
-    socket.on("releasemaster", function(){
-        console.log("%s try to releasemaster", socket.my_id);
-        if(masterID != socket.my_id){
+        if(!this._listeners[id]){
             console.log("!!!!!!!!! internal error !!!!!!!!!");
             return ;
         }
-        changeMasterID(null, socket);
-        // listeners.clear();
+        console.log("remove listener [%s]", id);
+        delete this._listeners[id];
+        for(var id in this._masters){
+            this._masters[id].emit("listenersChanged", this.getListenerIDs());
+        }
+        this.showListeners();
+    },
+    getListenerIDs: function(){
+        return Object.keys(this._listeners);
+    },
+    showConnections: function(){
+        showKeys(this._connections, "CCCCC");
+    },
+    showListeners: function(){
+        showKeys(this._listeners, "LLLLL");
+    },
+    showMasters: function(){
+        showKeys(this._masters, "MMMMM");
+    },
+};
+
+var g_connectionMgrHash = {};
+
+var g_connectionMgr = new ConnectionMgr();
+var g_puid = new Puid();
+
+io.sockets.on('connection', function(socket){
+    var id = g_puid.generate();
+    socket.my_id = id;
+    
+    g_connectionMgr.addConnection(id, socket);
+    socket.emit("clientConnect", id);
+    
+    socket.on("enterRoom", function(roomName){
+        console.log("[%s] enter [%s]", this.my_id, roomName);
+        socket.join(roomName);
+        if(!g_connectionMgrHash[roomName]){
+            g_connectionMgrHash[roomName] = new ConnectionMgr();
+        }
+    });
+    
+    socket.on('getmaster', function(){
+        console.log("%s try to get master.", socket.my_id);
+        g_connectionMgr.addMaster(socket.my_id, socket);
+        return ;
+    });
+    socket.on("releasemaster", function(){
+        g_connectionMgr.removeMaster(socket.my_id);
     });
     socket.on("getlisten", function(){
-        console.log("%s start to listen", socket.my_id);
-        // if(!masterID){
-            // console.log("master not exists");
-            // socket.emit("getlisten", false);
-            // return ;
-        // }
         socket.emit("getlisten", true);
-        listeners.addListener(socket.my_id, socket);
+        g_connectionMgr.addListener(socket.my_id, socket);
     });
     socket.on("releaselisten", function(){
-        console.log("%s end to listen", socket.my_id);
-        listeners.removeListener(socket.my_id);
+        g_connectionMgr.removeListener(socket.my_id);
     });
     
     socket.on('disconnect', function(){
         console.log("connection close [%s]", socket.my_id);
-        delete connections[socket.my_id];
-        listeners.removeListener(socket.my_id);
-        if(masterID === socket.my_id){
-            changeMasterID(null, socket);
-            // listeners.clear();
-        }
-        showKeys(connections);
+        g_connectionMgr.removeConnection(socket.my_id);
     });
 });
 
