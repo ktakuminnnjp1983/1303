@@ -5,11 +5,17 @@ var g_stream = null;
 var g_id;
 var g_givenMeidaConnections = {};
 
-var g_audioProcessor;
+var g_query = location.search;
+if(g_query.match(/document_id=(\d+)/) == null){
+    alert("document_id is null");
+    return ;
+}
+var g_docid = RegExp.$1;
 
 if(typeof AudioContext == "undefined"){
     AudioContext = webkitAudioContext;
 }
+var g_audioProcessor;
 var g_audioContext = new AudioContext();
 
 function showKeys(hash, sep){
@@ -152,6 +158,7 @@ function accessAudio(listeners){
             },
             function erroCallback(error){
                 alert(error);
+                $("#mastercheck").prop("checked", false);
             }
         );
     } else if(navigator.mozGetUserMedia){
@@ -173,6 +180,7 @@ function accessAudio(listeners){
             },
             function erroCallback(error){
                 alert(error);
+                $("#mastercheck").prop("checked", false);
             }
         );
     } else{
@@ -183,10 +191,11 @@ function accessAudio(listeners){
 g_socket.on("clientConnect", function(id){
     console.log("connect id[%s]", id);
 
-    g_socket.emit("enterRoom", location.hash)
+    g_socket.emit("enterRoom", g_docid);
 
     g_id = id;
-    $("#myid").text(g_id);
+    $("#myid").text("ID: " + g_id);
+    $("#myroom").text("Room: " + g_docid);
     g_peer = new Peer(id, {
         host:location.hostname, 
         port:9000,

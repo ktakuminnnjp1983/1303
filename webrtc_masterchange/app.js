@@ -31,7 +31,7 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 
 var httpServer = http.createServer(app);
-var io = require("socket.io").listen(httpServer);
+var io = require("socket.io").listen(httpServer, {"log level": 1});
 
 httpServer.listen(app.get("port"));
 
@@ -63,7 +63,7 @@ ConnectionMgr.prototype = {
     },
     removeConnection: function(id){
         if(!this._connections[id]){
-            console.log("!!!!!!!!! internal error !!!!!!!!!");
+            console.log("!!!!!!!!! internal error0 !!!!!!!!!");
             return ;
         }
         console.log("remove connection [%s]", id);
@@ -75,7 +75,7 @@ ConnectionMgr.prototype = {
     addMaster: function(id, socket){
         if(this._masterCount >= 3){
             socket.emit("getmaster", {result: false, listeners: []});
-            socket.broadcast.emit("wantMaster", socket.my_id);
+            this.broadcast(socket.my_id, "wantMaster", socket.my_id);
             return ;
         }
         ++this._masterCount;
@@ -86,7 +86,6 @@ ConnectionMgr.prototype = {
     },
     removeMaster: function(id){
         if(!this._masters[id]){
-            console.log("!!!!!!!!! internal error !!!!!!!!!");
             return ;
         }
         --this._masterCount;
@@ -104,7 +103,6 @@ ConnectionMgr.prototype = {
     },
     removeListener: function(id){
         if(!this._listeners[id]){
-            console.log("!!!!!!!!! internal error !!!!!!!!!");
             return ;
         }
         console.log("remove listener [%s]", id);
@@ -113,6 +111,14 @@ ConnectionMgr.prototype = {
             this._masters[id].emit("listenersChanged", this.getListenerIDs());
         }
         this.showListeners();
+    },
+    broadcast: function(myid, key, data){
+        for(var id in this._connections){
+            console.log("broadcast to [%s]->[%s]", myid, id);
+            if(id !== myid){
+                this._connections[id].emit(key, data);
+            }
+        }
     },
     getListenerIDs: function(){
         return Object.keys(this._listeners);
@@ -130,43 +136,44 @@ ConnectionMgr.prototype = {
 
 var g_connectionMgrHash = {};
 
-var g_connectionMgr = new ConnectionMgr();
 var g_puid = new Puid();
 
 io.sockets.on('connection', function(socket){
     var id = g_puid.generate();
     socket.my_id = id;
     
-    g_connectionMgr.addConnection(id, socket);
     socket.emit("clientConnect", id);
     
     socket.on("enterRoom", function(roomName){
         console.log("[%s] enter [%s]", this.my_id, roomName);
-        socket.join(roomName);
+        // socket.join(roomName);
+        socket.my_roomName = roomName;
         if(!g_connectionMgrHash[roomName]){
+            console.log("new Room [%s] created", roomName);
             g_connectionMgrHash[roomName] = new ConnectionMgr();
         }
+        g_connectionMgrHash[roomName].addConnection(socket.my_id, socket);
     });
     
     socket.on('getmaster', function(){
         console.log("%s try to get master.", socket.my_id);
-        g_connectionMgr.addMaster(socket.my_id, socket);
+        g_connectionMgrHash[this.my_roomName].addMaster(socket.my_id, socket);
         return ;
     });
     socket.on("releasemaster", function(){
-        g_connectionMgr.removeMaster(socket.my_id);
+        g_connectionMgrHash[this.my_roomName].removeMaster(socket.my_id);
     });
     socket.on("getlisten", function(){
         socket.emit("getlisten", true);
-        g_connectionMgr.addListener(socket.my_id, socket);
+        g_connectionMgrHash[this.my_roomName].addListener(socket.my_id, socket);
     });
     socket.on("releaselisten", function(){
-        g_connectionMgr.removeListener(socket.my_id);
+        g_connectionMgrHash[this.my_roomName].removeListener(socket.my_id);
     });
     
     socket.on('disconnect', function(){
         console.log("connection close [%s]", socket.my_id);
-        g_connectionMgr.removeConnection(socket.my_id);
+        g_connectionMgrHash[this.my_roomName].removeConnection(socket.my_id);
     });
 });
 
