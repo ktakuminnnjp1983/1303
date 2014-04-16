@@ -194,8 +194,8 @@ g_socket.on("clientConnect", function(id){
     g_socket.emit("enterRoom", g_docid);
 
     g_id = id;
-    $("#myid").text("ID: " + g_id);
-    $("#myroom").text("Room: " + g_docid);
+    $("#myid").text(id);
+    $("#myroom").text(g_docid);
     g_peer = new Peer(id, {
         host:location.hostname, 
         port:9000,
@@ -253,6 +253,10 @@ g_socket.on("wantMaster", function(id){
     setTimeout(function(){
         $("#wantDiv").empty();
     }, 5000);
+});
+g_socket.on("numConnectionChanged", function(num){
+    console.log(num);
+    $("#numConnection").text(num);
 });
 
 $("#mastercheck").change(function(e){

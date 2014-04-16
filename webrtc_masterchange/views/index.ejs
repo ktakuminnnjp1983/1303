@@ -18,8 +18,9 @@
         <input type="checkbox" id="listencheck"></input><label for="listencheck">音声を受信する</label>
     </div>
     <audio id="testaudio" autoplay="true"></audio>
-    <h3 id="myid" style="color:#0000ff;"></h3>
-    <h3 id="myroom" style="color:#0000ff;"></h3>
+    <h3 style="color:#0000ff;">ID: <span id="myid"></span></h3>
+    <h3 style="color:#0000ff;">Room: <span id="myroom"></span></h3>
+    <h3 style="color:#0000ff;">Connections: <span id="numConnection"></span></h3>
     <hr/>
     <div>音声を配信している相手</div>
     <div id="provideDiv"></div>
@@ -27,6 +28,7 @@
     <div>音声を受信している相手</div>
     <div id="givenDiv"></div>
     <br/>
-    <div id="wantDiv"></div>
+    <br/>
+    <div id="wantDiv" style="color:#ff0000"></div>
 </body>
 </html>
