@@ -77,13 +77,13 @@ ConnectionMgr.prototype = {
     },
     addMaster: function(id, socket){
         console.log("try to add master [%s]", id);
-        if(this._masterCount >= 3){
-            console.log("num of master full");
-            socket.emit("getmaster", {result: false, listeners: []});
-            // this.broadcast(socket.id, "wantMaster", socket.id);
-            socket.broadcast.to(this._roomName).emit("wantMaster", socket.id);
-            return ;
-        }
+        // if(this._masterCount >= 3){
+            // console.log("num of master full");
+            // socket.emit("getmaster", {result: false, listeners: []});
+            // // this.broadcast(socket.id, "wantMaster", socket.id);
+            // socket.broadcast.to(this._roomName).emit("wantMaster", socket.id);
+            // return ;
+        // }
         ++this._masterCount;
         console.log("new master [%s], num[%d]", id, this._masterCount);
         this._masters[id] = socket;
