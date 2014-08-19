@@ -9,6 +9,7 @@ var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
 var WebSocketServer = require('websocket').server;
+var fs = require("fs");
 
 var app = express();
 
@@ -60,14 +61,26 @@ wsServer.on("request", function(request){
         console.log("########################");
         if(message.type == "utf8"){
             console.log(message.utf8Data.length);
+            var buf = new Buffer(message.utf8Data.length);
+            for(var i=0; i<buf.length; ++i){
+                buf[i] = message.utf8Data[i].charCodeAt(0);
+            }
+            var fd = fs.openSync("./img.png", "w");
+            fs.write(fd, buf, 0, buf.length, 0, function(err, written){
+            });
+
             for(var i=0; i<connections.length; ++i){
                 connections[i].send(message.utf8Data);
             }
         } else if(message.type == "binary"){
-            console.log(message.binaryData.constructor);
+            console.log(message.binaryData);
             for(var i=0; i<connections.length; ++i){
                 connections[i].send(message.binaryData); // Buffer node.js
             }
+            
+            var fd = fs.openSync("./img.png", "w");
+            fs.write(fd, message.binaryData, 0, message.binaryData.length, 0, function(err, written){
+            });
         }
     });
     connection.on("close", function(reasonCode, description){

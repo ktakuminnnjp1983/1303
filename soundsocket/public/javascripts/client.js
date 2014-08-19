@@ -15,9 +15,12 @@ g_socket.onmessage = function(message){
     if(message.data.constructor === String){
         var obj = JSON.parse(message.data);
     } else if(message.data.constructor === Blob){
+        console.log("getblob");
         var fileReader = new FileReader();
         fileReader.onload = function(){
+            console.log(fileReader.result);
             var view = new Float32Array(fileReader.result);
+            console.log(view);
             var source = context.createBufferSource();
             var audioBuffer = context.createBuffer(1, context.sampleRate, context.sampleRate);
             var data = audioBuffer.getChannelData(0);
