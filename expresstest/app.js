@@ -58,10 +58,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 // io.adapter(redis({host: "localhost", port: 6379}));
 
 var redisStore = new RedisStore({
-    })
-});
-
-var redisStore = new RedisStore({
     host: "127.0.0.1",
     port: 6379
 });
