@@ -25,6 +25,12 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
+var cookiePaarser = require("cookie-parser");
+var session = require("express-session");
+
+app.use(cookiePaarser("test_secret"));
+app.use(session({key: "test_sess"}));
+
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());

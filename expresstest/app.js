@@ -42,10 +42,14 @@ var Test = require("./mod/testmod");
 var test = new Test("test");
 console.log("%s", test.teststr);
 
+// var redis = require("socket.io-redis");
+// io.adapter(redis({host: "localhost", port: 6379}));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+// middlewares
 // uncomment after placing your favicon in /public/images
 app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
@@ -54,14 +58,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// var redis = require("socket.io-redis");
-// io.adapter(redis({host: "localhost", port: 6379}));
-
 var redisStore = new RedisStore({
     host: "127.0.0.1",
     port: 6379
 });
-
 app.use(cookieParser(SECRET));
 app.use(session({
     name: SESSKEY,
@@ -69,6 +69,16 @@ app.use(session({
     store: redisStore,
     cookie: {httpOnly: false}
 }));
+
+app.use(function(req, res, next){
+    console.log("mymiddleware");
+    next();
+});
+
+app.use("/", function(req, res, next) {
+    console.log("mymiddleware");
+    next();
+});
 
 app.use('/', routes);
 app.use('/users', users);
@@ -128,63 +138,58 @@ app.use(function(err, req, res, next) {
     });
 });
 
+function setSession(sessID, key, val){
+    redisStore.get(sessID, function(err, session){
+        if(err){
+            console.log("eeee %s %s", err, session);
+        } else{
+            console.log("oooo %s %s", err, session);
+            session[key] = val;
+
+            redisStore.set(sessID, session, function(err, res){
+                if(err){
+                    console.log("EEEE");
+                } else{
+                    console.log("OOOO", err, res);
+                }
+            });
+        }
+    });
+}
+
 // http://jxck.hatenablog.com/entry/20110809/1312847290
-io.sockets.on("connection", function (socket) {
-    console.log(socket.handshake);
+io.use(function(socket, next){
+    console.log("##### authorization #####");
+    
     var targetCookie = cookie.parse(decodeURIComponent(socket.handshake.headers.cookie))
     var sessID = require("cookie-parser/lib/parse").signedCookies(targetCookie, "kobayashi_secret")[SESSKEY];
     if(!sessID){
-        console.log("invalid sessID");
+        next(new Error("auth error"));
         return ;
     }
-    
-    console.log("connection sessID[%s], sockID[%s]", sessID, socket.id);
-    socket.sessID = sessID;
+    console.log("sessID[%s]", sessID);
+    socket.handshake.sessID = sessID;
 
+    setSession(sessID, "hoge", "gooooooooooooo");
+    console.log("setsession t");
+
+    next();
+});
+
+io.sockets.on("connection", function (socket) {
+    console.log("##### connection #####");
+    console.log("connection sessID[%s], sockID[%s]", socket.handshake.sessID, socket.id);
 
     socket.on("disconnect", function(){
-        console.log("disconnect sessID[%s], sockID[%s]", socket.sessID, socket.id);
+        console.log("##### disconnect #####");
+        var sessID = socket.handshake.sessID;
+        console.log("disconnect sessID[%s], sockID[%s]", socket.handshake.sessID, socket.id);
     });
     
     socket.on("test", function(){
         console.log("test");
     });
 });
-io.set("authorization", function(handshake, callback){
-    console.log("##### authorization #####");
-    
-    var targetCookie = cookie.parse(decodeURIComponent(handshake.headers.cookie))
-    var sessID = require("cookie-parser/lib/parse").signedCookies(targetCookie, "kobayashi_secret")[SESSKEY];
-    if(!sessID){
-        callback("autherror", false);
-        return ;
-    }
-    console.log("sessID[%s]", sessID);
-    handshake.hoge = "test";
-    console.log(handshake);
-    
-    // redisStore.get(sessID, function(err, session){
-        // if(err){
-            // console.log("EEEEEEEEEEEEEEEEEEEEE");
-        // } else{
-            // console.log("OOOOOOOOOOOOOOOOOOOO");
-            // console.log(session);
-
-            // redisStore.set(sessID, session, function(err, session){
-                // if(err){
-                    // console.log("EEEEEEEEEEEEEEEEEEEEE");
-                // } else{
-                    // console.log("OOOOOOOOOOOOOOOOOOOO");
-                    // console.log(session);
-                // }
-            // });
-        // }
-    // });
-
-    // callback("auth error", false);
-    callback(null, true);
-});
-
 
 
 // rpc

@@ -3,10 +3,9 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  // console.log(req.cookie);
-  console.log(req.session);
-  req.session.hoge = "boke";
-  // console.log(req.signedCookies["testsess"]);
+  console.log("##### root access #####");
+  console.log(req.session.hoge);
+  console.log(req.signedCookies);
 
   res.render('index', { title: 'Express' });
 });
