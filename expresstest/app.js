@@ -5,8 +5,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var routes = require('./routes/index');
-var users = require('./routes/users');
 var app = express();
 var argv = require("argv");
 var session = require('express-session');
@@ -14,6 +12,11 @@ var RedisStore = require('connect-redis')(session);
 var cookie = require('cookie');
 
 var myutil = require('./mod/myutil');
+
+// router
+var routes = require('./routes/index');
+var users = require('./routes/users');
+var download = require('./routes/download');
 
 // const
 var SESSKEY = "sessID";
@@ -80,8 +83,10 @@ app.use("/", function(req, res, next) {
     next();
 });
 
+// routers
 app.use('/', routes);
 app.use('/users', users);
+app.use('/download/*', download);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -178,6 +183,7 @@ io.use(function(socket, next){
 
 io.sockets.on("connection", function (socket) {
     console.log("##### connection #####");
+    console.log(io.origins());
     console.log("connection sessID[%s], sockID[%s]", socket.handshake.sessID, socket.id);
 
     socket.on("disconnect", function(){
