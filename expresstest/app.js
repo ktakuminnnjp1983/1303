@@ -16,7 +16,6 @@ var myutil = require('./mod/myutil');
 // router
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var download = require('./routes/download');
 
 // const
 var SESSKEY = "sessID";
@@ -86,7 +85,6 @@ app.use("/", function(req, res, next) {
 // routers
 app.use('/', routes);
 app.use('/users', users);
-app.use('/download/*', download);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -192,8 +190,12 @@ io.sockets.on("connection", function (socket) {
         console.log("disconnect sessID[%s], sockID[%s]", socket.handshake.sessID, socket.id);
     });
     
-    socket.on("test", function(){
-        console.log("test");
+    socket.on("enter", function(callback){
+        callback(socket.id);
+    });
+    socket.on("sound", function(sound){
+        // console.log(sound);
+        io.emit("soundret", sound);
     });
 });
 
@@ -207,5 +209,44 @@ var dserver = dnode({
     }
 });
 dserver.listen(5004);
+
+//binaryserver
+var binaryServer = require("binaryjs").BinaryServer;
+var bs = binaryServer({port: 9001});
+
+var soundStreams = {};
+var clients = {};
+bs.on("connection", function(client){
+    console.log("BinaryConnection STAAAAAAAAAAAAAAAAAART");
+    client.on("stream", function(stream, meta){
+        console.log("BinaryConnection get stream type[%s] id[%s]", meta.type, meta.id);
+        clients[meta.id] = client;
+        client.myid = meta.id;
+        if(meta.type == "sound"){
+            console.log("sound");
+            soundStreams[meta.id] = stream;
+            stream.on("data", function(chunk){
+                // console.log(chunk.length);
+                // client.send(chunk);
+            });
+        } else if(meta.type == "listen"){
+            console.log("listen");
+            for(var id in soundStreams){
+                console.log(id);
+                soundStreams[id].pipe(stream);
+            }
+        }
+        stream.on("close", function(){
+            console.log("stream closed");
+        });
+    });
+    client.on("close", function(){
+        console.log("BinaryConnection CLOOOOOOOOOOOOOOSE");
+    });
+    
+    // var file = fs.createReadStream("./wavfiles/all_5_Auditor\ User_143_1_1418032842946.wav");
+    // client.send(file);
+});
+
 
 module.exports = app;
